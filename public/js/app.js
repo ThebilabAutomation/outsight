@@ -7,7 +7,10 @@
   const $$ = sel => document.querySelectorAll(sel);
   const fmtBI = v => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2).replace(".", ",");
   const fmtBRL = v => "R$ " + v.toLocaleString("pt-BR");
-  const biColor = v => v >= 0.5 ? "#2ee6a8" : v <= -0.1 ? "#ff5c7a" : "#ffb547";
+  const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const biVarName = v => v >= 0.5 ? "--pos" : v <= -0.1 ? "--neg" : "--warn";
+  const biColor = v => `var(${biVarName(v)})`;      // para estilos inline (acompanha o tema)
+  const biColorRaw = v => cssVar(biVarName(v));      // para canvas (valor resolvido)
   const biTag = v => v >= 0.5 ? "AÇÃO" : v <= -0.1 ? "INAÇÃO" : "PONTO CRÍTICO";
 
   /* ================= NAVEGAÇÃO ================= */
@@ -39,16 +42,16 @@
     // trilha
     ctx.lineWidth = opts.thick || 13;
     ctx.lineCap = "round";
-    ctx.strokeStyle = "rgba(120,150,220,.12)";
+    ctx.strokeStyle = cssVar("--gauge-track") || "rgba(120,150,220,.12)";
     ctx.beginPath();
     ctx.arc(cx, cy, r, Math.PI, 2 * Math.PI);
     ctx.stroke();
 
-    // arco de valor (gradiente vermelho→amarelo→verde)
+    // arco de valor (gradiente vermelho→amarelo→verde, resolvido do tema)
     const grad = ctx.createLinearGradient(cx - r, 0, cx + r, 0);
-    grad.addColorStop(0, "#ff5c7a");
-    grad.addColorStop(0.45, "#ffb547");
-    grad.addColorStop(1, "#2ee6a8");
+    grad.addColorStop(0, cssVar("--neg"));
+    grad.addColorStop(0.45, cssVar("--gauge-mid"));
+    grad.addColorStop(1, cssVar("--pos"));
     ctx.strokeStyle = grad;
     ctx.beginPath();
     ctx.arc(cx, cy, r, Math.PI, Math.PI + Math.PI * frac);
@@ -57,19 +60,40 @@
     // ponteiro
     const ang = Math.PI + Math.PI * frac;
     const px = cx + (r - 2) * Math.cos(ang), py = cy + (r - 2) * Math.sin(ang);
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = cssVar("--card") || "#fff";
     ctx.beginPath(); ctx.arc(px, py, 5.5, 0, 2 * Math.PI); ctx.fill();
-    ctx.strokeStyle = biColor(value); ctx.lineWidth = 3;
+    ctx.strokeStyle = biColorRaw(value); ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(px, py, 8, 0, 2 * Math.PI); ctx.stroke();
   }
 
-  drawGauge($("#gauge-rail"), D.brand.behaviorIndexGeral);
+  function drawAllGauges() {
+    drawGauge($("#gauge-rail"), D.brand.behaviorIndexGeral);
+    drawGauge($("#gauge-big"), D.brand.behaviorIndexGeral, { thick: 18 });
+  }
+  drawAllGauges();
   $("#gauge-rail-value").textContent = fmtBI(D.brand.behaviorIndexGeral);
   $("#gauge-rail-value").style.color = biColor(D.brand.behaviorIndexGeral);
-  drawGauge($("#gauge-big"), D.brand.behaviorIndexGeral, { thick: 18 });
   $("#gauge-big-value").textContent = fmtBI(D.brand.behaviorIndexGeral);
   $("#gauge-big-value").style.color = biColor(D.brand.behaviorIndexGeral);
   $("#bi-mini-value").textContent = fmtBI(D.brand.behaviorIndexGeral);
+
+  /* ================= TEMA CLARO/ESCURO ================= */
+  const themeIcon = $("#theme-icon");
+  const applyThemeIcon = () => { themeIcon.textContent = document.documentElement.dataset.theme === "light" ? "🌙" : "☀️"; };
+  applyThemeIcon();
+  $("#theme-toggle").addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    document.documentElement.dataset.theme = next;
+    localStorage.setItem("outsight-theme", next);
+    applyThemeIcon();
+    drawAllGauges();
+    if (chartsReady) {
+      chartInstances.forEach(c => c.destroy());
+      chartInstances.length = 0;
+      chartsReady = false;
+      if ($("#view-sinais").classList.contains("active")) buildCharts();
+    }
+  });
 
   /* ================= CHAT ================= */
   const chatMessages = $("#chat-messages");
@@ -183,7 +207,7 @@
       const fallback = offlineAnswer(text);
       if (fallback) {
         typingDiv.querySelector(".msg-bubble").innerHTML =
-          `<p style="font-size:11px;color:#ffb547;margin-bottom:8px">⚠️ Modo offline (IA indisponível: ${err.message}). Resposta pré-calculada da demo:</p>` +
+          `<p style="font-size:11px;color:var(--warn);margin-bottom:8px">⚠️ Modo offline (IA indisponível: ${err.message}). Resposta pré-calculada da demo:</p>` +
           renderReply(fallback);
         history.push({ role: "assistant", content: fallback });
       } else {
@@ -367,7 +391,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
 
   /* ================= RAIL: ALERTAS ================= */
   $("#alert-count").textContent = D.alertas.length;
-  const sevColor = { critica: "#ff5c7a", oportunidade: "#2ee6a8", alta: "#ffb547", media: "#4f7cff" };
+  const sevColor = { critica: "var(--neg)", oportunidade: "var(--pos)", alta: "var(--warn)", media: "var(--accent)" };
   D.alertas.forEach(a => {
     const el = document.createElement("div");
     el.className = "rail-alert";
@@ -459,7 +483,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
     const el = document.createElement("div");
     el.className = "tema-row";
     const pct = Math.min(100, Math.round((t.volume / 5000) * 100));
-    const cor = t.sentimento >= 0 ? "#2ee6a8" : "#ff5c7a";
+    const cor = t.sentimento >= 0 ? "var(--pos)" : "var(--neg)";
     el.innerHTML = `
       <div class="tema-nome">${t.tema}</div>
       <div class="tema-meta">${t.volume.toLocaleString("pt-BR")} menções · ${t.tendencia}</div>
@@ -470,7 +494,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
 
   /* ---- PILAR 1: usabilidade ---- */
   $("#release-nota").textContent = D.usabilidade.releaseNota;
-  const sevIssueColor = { critica: "#ff5c7a", alta: "#ffb547", media: "#4f7cff" };
+  const sevIssueColor = { critica: "var(--neg)", alta: "var(--warn)", media: "var(--accent)" };
   D.usabilidade.issues.forEach(i => {
     const el = document.createElement("div");
     el.className = "issue-card";
@@ -487,7 +511,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
     $("#issues-grid").appendChild(el);
   });
 
-  const diagLabel = { critico: ["🔴 Causa interna (bug filtro)", "#ff5c7a"], externo: ["📡 Causa externa (viral)", "#ffb547"], atencao: ["🟡 Observar (LCP alto)", "#ffb547"], ok: ["🟢 Saudável", "#2ee6a8"] };
+  const diagLabel = { critico: ["🔴 Causa interna (bug filtro)", "var(--neg)"], externo: ["📡 Causa externa (viral)", "var(--warn)"], atencao: ["🟡 Observar (LCP alto)", "var(--warn)"], ok: ["🟢 Saudável", "var(--pos)"] };
   const funilBody = $("#funil-table tbody");
   D.usabilidade.funilProdutos.forEach(f => {
     const tr = document.createElement("tr");
@@ -505,7 +529,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
   });
 
   /* ---- PILAR 2: demanda latente ---- */
-  const potLabel = { alto: ["ALTO POTENCIAL", "#2ee6a8"], choque: ["💥 INSIGHT DE CHOQUE", "#9b5cff"], medio: ["MÉDIO", "#4f7cff"] };
+  const potLabel = { alto: ["ALTO POTENCIAL", "var(--pos)"], choque: ["💥 INSIGHT DE CHOQUE", "var(--accent-2)"], medio: ["MÉDIO", "var(--accent)"] };
   D.demandaLatente.forEach(dm => {
     const [pl, pc] = potLabel[dm.potencial];
     const el = document.createElement("div");
@@ -528,7 +552,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
 
   /* ---- PILAR 3: campanhas ---- */
   $("#publico-gap-resumo").textContent = D.publicoGap.resumo;
-  const statusLabel = { escalar: ["▲ Escalar", "#2ee6a8"], otimizar: ["◈ Otimizar", "#38d6ff"], manter: ["● Manter", "#93a1bd"], revisar: ["▼ Revisar", "#ff5c7a"] };
+  const statusLabel = { escalar: ["▲ Escalar", "var(--pos)"], otimizar: ["◈ Otimizar", "var(--cyan)"], manter: ["● Manter", "var(--txt-2)"], revisar: ["▼ Revisar", "var(--neg)"] };
   const campBody = $("#campanhas-table tbody");
   D.campanhas.forEach(c => {
     const [sl, sc] = statusLabel[c.status];
@@ -588,10 +612,11 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
 
   /* ================= CHARTS ================= */
   let chartsReady = false;
+  const chartInstances = [];
   function buildCharts() {
     chartsReady = true;
-    Chart.defaults.color = "#93a1bd";
-    Chart.defaults.borderColor = "rgba(120,150,220,.10)";
+    Chart.defaults.color = cssVar("--txt-2");
+    Chart.defaults.borderColor = cssVar("--chart-grid");
     Chart.defaults.font.family = "'Inter', sans-serif";
     Chart.defaults.font.size = 11;
 
@@ -602,14 +627,14 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
     const viralIdx = 75, checkoutIdx = 52;
 
     // receita
-    new Chart($("#chart-receita"), {
+    chartInstances.push(new Chart($("#chart-receita"), {
       type: "line",
       data: {
         labels,
         datasets: [{
           label: "Receita (R$)",
           data: D.dias.map(d => d.receita),
-          borderColor: "#4f7cff",
+          borderColor: cssVar("--accent"),
           backgroundColor: (ctx) => {
             const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 280);
             g.addColorStop(0, "rgba(79,124,255,.35)"); g.addColorStop(1, "rgba(79,124,255,0)");
@@ -635,8 +660,8 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
         afterDraw(chart) {
           const { ctx, chartArea, scales } = chart;
           const marks = [
-            { i: checkoutIdx, label: "Novo checkout", color: "#2ee6a8" },
-            { i: viralIdx, label: "Viral zíper Vega", color: "#ff5c7a" }
+            { i: checkoutIdx, label: "Novo checkout", color: cssVar("--pos") },
+            { i: viralIdx, label: "Viral zíper Vega", color: cssVar("--neg") }
           ];
           marks.forEach(m => {
             const x = scales.x.getPixelForValue(m.i);
@@ -649,16 +674,16 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
           });
         }
       }]
-    });
+    }));
 
     // conversão
-    new Chart($("#chart-conversao"), {
+    chartInstances.push(new Chart($("#chart-conversao"), {
       type: "line",
       data: {
         labels,
         datasets: [{
           data: D.dias.map(d => d.conversao),
-          borderColor: "#38d6ff", tension: .35, pointRadius: 0, borderWidth: 2, fill: false
+          borderColor: cssVar("--cyan"), tension: .35, pointRadius: 0, borderWidth: 2, fill: false
         }]
       },
       options: {
@@ -666,16 +691,16 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
         plugins: { legend: { display: false } },
         scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { ticks: { callback: v => v.toFixed(1) + "%" } } }
       }
-    });
+    }));
 
     // abandono
-    new Chart($("#chart-abandono"), {
+    chartInstances.push(new Chart($("#chart-abandono"), {
       type: "line",
       data: {
         labels,
         datasets: [{
           data: D.dias.map(d => d.abandono),
-          borderColor: "#ff8a5c", tension: .35, pointRadius: 0, borderWidth: 2
+          borderColor: cssVar("--ie-color"), tension: .35, pointRadius: 0, borderWidth: 2
         }]
       },
       options: {
@@ -683,17 +708,17 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
         plugins: { legend: { display: false } },
         scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { ticks: { callback: v => v + "%" } } }
       }
-    });
+    }));
 
     // social stacked
-    new Chart($("#chart-social"), {
+    chartInstances.push(new Chart($("#chart-social"), {
       type: "bar",
       data: {
         labels: D.social.semanas,
         datasets: [
-          { label: "Positivas", data: D.social.mencoes.positivas, backgroundColor: "#2ee6a8" },
-          { label: "Neutras", data: D.social.mencoes.neutras, backgroundColor: "#5c6a87" },
-          { label: "Negativas", data: D.social.mencoes.negativas, backgroundColor: "#ff5c7a" }
+          { label: "Positivas", data: D.social.mencoes.positivas, backgroundColor: cssVar("--pos") },
+          { label: "Neutras", data: D.social.mencoes.neutras, backgroundColor: cssVar("--txt-3") },
+          { label: "Negativas", data: D.social.mencoes.negativas, backgroundColor: cssVar("--neg") }
         ]
       },
       options: {
@@ -701,16 +726,16 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
         plugins: { legend: { position: "bottom" } },
         scales: { x: { stacked: true }, y: { stacked: true } }
       }
-    });
+    }));
 
     // canais
-    new Chart($("#chart-canais"), {
+    chartInstances.push(new Chart($("#chart-canais"), {
       type: "bar",
       data: {
         labels: D.social.canais.map(c => c.canal),
         datasets: [{
           data: D.social.canais.map(c => c.sentimento),
-          backgroundColor: D.social.canais.map(c => c.sentimento >= 0 ? "#2ee6a8" : "#ff5c7a"),
+          backgroundColor: D.social.canais.map(c => c.sentimento >= 0 ? cssVar("--pos") : cssVar("--neg")),
           borderRadius: 6
         }]
       },
@@ -723,7 +748,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
         },
         scales: { x: { min: -60, max: 60 } }
       }
-    });
+    }));
   }
 
   /* ================= VIEW: ALERTAS ================= */

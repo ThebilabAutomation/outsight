@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Be OutSight — Inteligência Corporativa Autônoma</title>
   <meta name="description" content="Be OutSight: o agente autônomo que conecta o comportamento interno do e-commerce ao contexto real das ruas. Demo — VELLA Fashion.">
+  <script>document.documentElement.dataset.theme = localStorage.getItem("outsight-theme") || "dark";</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
@@ -30,6 +31,7 @@
     </div>
     <div class="topbar-right">
       <div class="agent-status"><span class="pulse"></span> Agente ativo · monitorando 5 canais</div>
+      <button id="theme-toggle" class="theme-toggle" title="Alternar tema claro/escuro"><span id="theme-icon">☀️</span></button>
     </div>
   </header>
 
