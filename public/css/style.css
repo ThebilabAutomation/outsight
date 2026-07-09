@@ -528,6 +528,78 @@ h1 { font-family: var(--font-display); font-size: 34px; font-weight: 800; margin
   border: 1px solid var(--line); border-radius: 11px; background: var(--card); padding: 10px 14px;
 }
 
+/* ===== VIEW HEAD (título + botão IA) ===== */
+.view-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+.btn-ia-lg { padding: 11px 20px; font-size: 13px; border-radius: 12px; margin-top: 8px; white-space: nowrap; }
+
+/* ===== CHAT TOOLBAR ===== */
+.chat-toolbar {
+  display: flex; justify-content: flex-end; gap: 8px;
+  padding: 10px 34px 0;
+}
+.tool-btn {
+  border: 1px solid var(--line); background: var(--card); color: var(--txt-3);
+  border-radius: 9px; padding: 5px 12px; font-size: 11.5px; font-family: var(--font-body);
+  cursor: pointer; transition: all .15s;
+}
+.tool-btn:hover { color: var(--txt); border-color: var(--accent); }
+
+/* ===== TRENDS: PICOS ===== */
+.picos-grid { display: grid; grid-template-columns: 1fr 300px; gap: 16px; margin-top: 18px; align-items: stretch; }
+.picos-card canvas { max-height: 300px; }
+.picos-callouts { display: flex; flex-direction: column; gap: 12px; }
+.pico-callout {
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--card);
+  padding: 15px 17px; flex: 1;
+}
+.pico-head { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.pico-letra {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 13px; color: #fff; flex-shrink: 0;
+}
+.pico-callout.pos .pico-letra { background: var(--pos); }
+.pico-callout.neg .pico-letra { background: var(--neg); }
+.pico-titulo { font-family: var(--font-display); font-size: 12.5px; font-weight: 700; line-height: 1.35; }
+.pico-detalhe { font-size: 11.5px; color: var(--txt-2); line-height: 1.55; }
+
+/* ===== TRENDS: TABELA ===== */
+.trends-table td { vertical-align: middle; }
+.trend-rank { font-family: var(--font-display); font-weight: 800; font-size: 16px; color: var(--txt-3); }
+.trend-termo { font-family: var(--font-display); font-weight: 700; font-size: 13.5px; }
+.trend-fonte {
+  font-size: 10px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+  border: 1px solid var(--line); border-radius: 99px; padding: 2px 9px; color: var(--txt-2);
+  white-space: nowrap;
+}
+.trend-cresc { font-family: var(--font-display); font-weight: 800; font-size: 14px; }
+.trend-nota { font-size: 11.5px; color: var(--txt-2); line-height: 1.45; max-width: 260px; }
+.trend-tag {
+  display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  border-radius: 99px; padding: 2px 8px; margin-left: 8px; text-transform: uppercase; vertical-align: middle;
+}
+.trend-tag.oportunidade { background: rgba(46,230,168,.14); color: var(--pos); }
+.trend-tag.crise { background: rgba(255,92,122,.14); color: var(--neg); }
+.trend-tag.choque { background: rgba(155,92,255,.16); color: var(--accent-2); }
+.btn-ia-sm { padding: 5px 11px; font-size: 11px; border-radius: 8px; }
+
+/* ===== TRENDS: RODAPÉ (sov / setores / nuvem) ===== */
+.trends-bottom { display: grid; grid-template-columns: 1fr 1.2fr 1.3fr; gap: 16px; margin-top: 20px; }
+.trends-bottom .chart-card canvas { max-height: 210px; }
+.setores-list { display: flex; flex-direction: column; gap: 9px; padding-top: 4px; }
+.setor-row { display: flex; align-items: center; gap: 10px; }
+.setor-nome { font-size: 12px; width: 84px; flex-shrink: 0; color: var(--txt-2); }
+.setor-bar { flex: 1; height: 10px; border-radius: 99px; background: var(--bg-3); overflow: hidden; }
+.setor-bar i { display: block; height: 100%; border-radius: 99px; }
+.setor-delta { font-family: var(--font-display); font-weight: 800; font-size: 12px; min-width: 58px; text-align: right; }
+.nuvem { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; justify-content: center; padding: 12px 4px; }
+.nuvem span { font-family: var(--font-display); font-weight: 700; line-height: 1.15; cursor: pointer; transition: opacity .15s; }
+.nuvem span:hover { opacity: .65; }
+
+@media (max-width: 1100px) {
+  .picos-grid { grid-template-columns: 1fr; }
+  .trends-bottom { grid-template-columns: 1fr; }
+}
+
 /* ===== RESPONSIVO ===== */
 @media (max-width: 1100px) {
   .chat-rail { display: none; }

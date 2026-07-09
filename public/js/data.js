@@ -385,6 +385,53 @@ const VELLA = (() => {
     }
   ];
 
+  /* ---------- Trends externos (fashion) — demo fictícia ---------- */
+  const trends = {
+    atualizado: "há 12 min · fontes simuladas para demo",
+    ranking: [
+      { rank: 1, termo: "#trenchcoat", fonte: "TikTok", volume: "84,2M views", posts: "82,6K posts", crescimento: 134, sentimento: 81, spark: [12, 14, 13, 16, 18, 22, 27, 34, 41, 55, 68, 84], nota: "Onda de inverno amplificada pelo reel da @amandalooks — o Trench Maré surfa essa tendência.", tag: "oportunidade" },
+      { rank: 2, termo: "vestido casamento civil", fonte: "Google Trends", volume: "interesse 78/100", posts: "+209% · 4 sem", crescimento: 209, sentimento: 88, spark: [8, 9, 9, 10, 11, 12, 14, 17, 22, 29, 38, 52], nota: "Micro-nicho em explosão — conecta direto com o insight 'Noiva Civil' (Constelação).", tag: "choque" },
+      { rank: 3, termo: "#inverno2026looks", fonte: "TikTok", volume: "44,8M views", posts: "31,2K posts", crescimento: 52, sentimento: 74, spark: [20, 22, 25, 24, 28, 31, 35, 38, 42, 47, 52, 58], nota: "Categoria inteira de casacos e camadas em alta sazonal.", tag: "" },
+      { rank: 4, termo: "plus size inverno", fonte: "Google Trends", volume: "interesse 64/100", posts: "+62% · 4 sem", crescimento: 62, sentimento: -12, spark: [22, 24, 23, 26, 28, 27, 31, 34, 33, 38, 41, 46], nota: "Demanda crescendo com tom de frustração — bate com as 3.900 buscas internas sem resultado.", tag: "oportunidade" },
+      { rank: 5, termo: "casaco oversized", fonte: "Google Trends", volume: "interesse 91/100", posts: "+38% · 4 sem", crescimento: 38, sentimento: 42, spark: [45, 48, 52, 50, 55, 58, 62, 66, 71, 78, 85, 91], nota: "Silhueta dominante do inverno — o Vega perdeu a janela por causa da crise do zíper.", tag: "" },
+      { rank: 6, termo: "#casacovega", fonte: "TikTok", volume: "4,2M views", posts: "3,1K posts", crescimento: 340, sentimento: -72, spark: [1, 1, 1, 1, 2, 2, 2, 3, 4, 38, 26, 18], nota: "Crescimento explosivo NEGATIVO — crise do zíper. Volume recuando, janela de resposta aberta.", tag: "crise" },
+      { rank: 7, termo: "frente fria SP", fonte: "X/Twitter", volume: "trending topic 3x na semana", posts: "142K posts", crescimento: 88, sentimento: 12, spark: [10, 8, 12, 9, 14, 12, 18, 22, 28, 34, 42, 51], nota: "Gatilho climático correlacionado: busca por casacos +64% nos dias de trending.", tag: "" },
+      { rank: 8, termo: "#alfaiatariafeminina", fonte: "Instagram", volume: "12,4M views", posts: "18,7K posts", crescimento: 28, sentimento: 66, spark: [30, 31, 33, 32, 35, 36, 38, 37, 40, 42, 44, 46], nota: "Tendência estável de fundo — sustenta o Blazer Ícone e a extensão em tons pastel.", tag: "" }
+    ],
+    picos: {
+      semanas: ["20/abr", "27/abr", "04/mai", "11/mai", "18/mai", "25/mai", "01/jun", "08/jun", "15/jun", "22/jun", "29/jun", "06/jul"],
+      volume: [2410, 2280, 2520, 2390, 2610, 2480, 2740, 4480, 3350, 7120, 5030, 4390],
+      marcadores: [
+        { idx: 7, letra: "B", tipo: "pos", titulo: "Reel @amandalooks — Trench Maré (10/jun)", detalhe: "Volume 82% acima da média · 890k views · salvamentos 4x acima da média · busca \"trench coat\" +64%" },
+        { idx: 9, letra: "A", tipo: "neg", titulo: "Viral do zíper — @stylecomlulu (24/jun)", detalhe: "Volume 317% acima da média · 2,1M views · 4.830 menções #casacovega · 89 matérias em portais" }
+      ]
+    },
+    shareOfVoice: [
+      { marca: "VELLA", share: 38 },
+      { marca: "AURA Moda", share: 26 },
+      { marca: "Urbanika", share: 21 },
+      { marca: "Outras", share: 15 }
+    ],
+    setores: [
+      { setor: "Casacos", mencoes: 8940, delta: 212 },
+      { setor: "Vestidos", mencoes: 4310, delta: 48 },
+      { setor: "Alfaiataria", mencoes: 2180, delta: 28 },
+      { setor: "Calçados", mencoes: 1520, delta: 23 },
+      { setor: "Saias", mencoes: 1740, delta: -18 },
+      { setor: "Acessórios", mencoes: 980, delta: -7 }
+    ],
+    nuvem: [
+      { t: "trench coat", w: 98, tipo: "pos" }, { t: "zíper vega", w: 74, tipo: "neg" },
+      { t: "inverno 2026", w: 86, tipo: "acc" }, { t: "plus size", w: 66, tipo: "warn" },
+      { t: "casaco oversized", w: 78, tipo: "acc2" }, { t: "noiva civil", w: 58, tipo: "pos" },
+      { t: "verde-oliva", w: 52, tipo: "pos" }, { t: "frente fria", w: 48, tipo: "cyan" },
+      { t: "alfaiataria", w: 46, tipo: "acc" }, { t: "frete demorado", w: 42, tipo: "neg" },
+      { t: "looks festa", w: 38, tipo: "acc2" }, { t: "tons pastel", w: 34, tipo: "cyan" },
+      { t: "tabela de medidas", w: 32, tipo: "neg" }, { t: "linho", w: 26, tipo: "acc" },
+      { t: "unboxing", w: 30, tipo: "pos" }, { t: "bota plataforma", w: 24, tipo: "cyan" }
+    ]
+  };
+
   /* ---------- Prompts sugeridos (3 pilares) ---------- */
   const promptsPilares = [
     {
@@ -417,5 +464,5 @@ const VELLA = (() => {
   ];
   const promptsSugeridos = promptsPilares.flatMap(p => p.prompts);
 
-  return { brand, produtos, clusters, biContextos, dias, social, alertas, usabilidade, demandaLatente, campanhas, publicoGap, lojas, promptsPilares, promptsSugeridos };
+  return { brand, produtos, clusters, biContextos, dias, social, alertas, usabilidade, demandaLatente, campanhas, publicoGap, lojas, trends, promptsPilares, promptsSugeridos };
 })();

@@ -48,6 +48,9 @@
       <button class="nav-btn" data-view="sinais">
         <span class="nav-ico">📡</span><span class="nav-label">Sinais &amp; Dados</span>
       </button>
+      <button class="nav-btn" data-view="trends">
+        <span class="nav-ico">📈</span><span class="nav-label">Trends</span>
+      </button>
       <button class="nav-btn" data-view="alertas">
         <span class="nav-ico">⚡</span><span class="nav-label">Alertas</span>
         <span class="nav-badge" id="alert-count">4</span>
@@ -67,6 +70,10 @@
       <section class="view active" id="view-chat">
         <div class="chat-wrap">
           <div class="chat-col">
+            <div class="chat-toolbar">
+              <button class="tool-btn" id="chat-download" title="Baixar conversa em .txt">⬇ Baixar conversa</button>
+              <button class="tool-btn" id="chat-clear" title="Limpar conversa">🗑 Limpar</button>
+            </div>
             <div class="chat-scroll" id="chat-scroll">
               <div class="chat-hero" id="chat-hero">
                 <div class="hero-orb"></div>
@@ -154,9 +161,14 @@
       <!-- ========== VIEW: SINAIS & DADOS ========== -->
       <section class="view" id="view-sinais">
         <div class="view-scroll">
-          <div class="section-kicker">DE DENTRO PARA FORA</div>
-          <h1>Sinais <span class="grad">&amp; Dados</span></h1>
-          <p class="section-sub">O interno (loja) e o externo (ruas) lado a lado — a bolha, estourada.</p>
+          <div class="view-head">
+            <div>
+              <div class="section-kicker">DE DENTRO PARA FORA</div>
+              <h1>Sinais <span class="grad">&amp; Dados</span></h1>
+              <p class="section-sub">O interno (loja) e o externo (ruas) lado a lado — a bolha, estourada.</p>
+            </div>
+            <button class="btn-ia btn-ia-lg" id="sinais-ia">✦ Pedir leitura da IA</button>
+          </div>
 
           <div class="kpi-row" id="kpi-row"></div>
 
@@ -226,6 +238,53 @@
               </tr></thead>
               <tbody></tbody>
             </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== VIEW: TRENDS ========== -->
+      <section class="view" id="view-trends">
+        <div class="view-scroll">
+          <div class="view-head">
+            <div>
+              <div class="section-kicker">RADAR EXTERNO · FASHION</div>
+              <h1>Trends <span class="grad">nas ruas</span></h1>
+              <p class="section-sub">O que está subindo lá fora antes de virar (ou deixar de virar) venda aqui dentro. <span class="release-nota" id="trends-updated"></span></p>
+            </div>
+            <button class="btn-ia btn-ia-lg" id="trends-ia">✦ Pedir leitura da IA</button>
+          </div>
+
+          <div class="picos-grid">
+            <div class="chart-card wide picos-card">
+              <div class="chart-title">Volume de conversas sobre a marca <span class="chart-note">12 semanas · picos detectados pelo agente</span></div>
+              <canvas id="chart-picos"></canvas>
+            </div>
+            <div class="picos-callouts" id="picos-callouts"></div>
+          </div>
+
+          <h2 class="section-title">Ranking de tendências <span class="pilar-tag">fashion · Brasil</span></h2>
+          <div class="table-wrap">
+            <table class="prod-table trends-table" id="trends-table">
+              <thead><tr>
+                <th>#</th><th>Tendência</th><th>Fonte</th><th>Volume</th><th>Crescimento</th><th>Últimas 12 sem</th><th>Leitura do agente</th><th></th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="trends-bottom">
+            <div class="chart-card">
+              <div class="chart-title">Share of voice <span class="chart-note">menções da categoria</span></div>
+              <canvas id="chart-sov"></canvas>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Conversas por categoria <span class="chart-note">semana · variação</span></div>
+              <div class="setores-list" id="setores-list"></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Nuvem de temas <span class="chart-note">o que as ruas falam</span></div>
+              <div class="nuvem" id="nuvem"></div>
+            </div>
           </div>
         </div>
       </section>

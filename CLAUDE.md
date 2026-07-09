@@ -29,6 +29,12 @@ Toda feature nova deve servir a pelo menos um pilar:
 2. **Novos produtos** — demanda latente cruzando menções externas com buscas internas (plus size, Maré verde-oliva, "Noiva Civil").
 3. **Público & campanha** — público real vs. pretendido, ROAS por cluster.
 
+## Views da interface
+
+Copilot (chat) · Behavior Index · Sinais & Dados · **Trends** (radar externo fashion: picos anotados A/B com callouts de drivers, ranking com sparklines SVG, share of voice, conversas por categoria, nuvem de temas) · Alertas. Trends é 100% fictício por decisão de produto — APIs reais (Google Trends alpha, TikTok Commercial Content API, X pago) ficam para o roadmap de produção via Netlify Functions dedicadas.
+
+Chat tem toolbar com "Baixar conversa" (.txt) e "Limpar" (restaura o hero com os chips). Sinais & Dados e Trends têm botão "✦ Pedir leitura da IA" no header. Gráficos são lazy (`buildCharts`/`buildTrendsCharts` + flags `chartsReady`/`trendsReady`) e reconstruídos na troca de tema via `chartInstances`.
+
 ## Arquitetura
 
 - **Site estático** em `public/` — vanilla JS, sem build. Chart.js e marked.js via CDN.

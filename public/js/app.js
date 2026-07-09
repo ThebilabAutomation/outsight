@@ -21,6 +21,7 @@
       $$(".view").forEach(v => v.classList.remove("active"));
       $("#view-" + btn.dataset.view).classList.add("active");
       if (btn.dataset.view === "sinais" && !chartsReady) buildCharts();
+      if (btn.dataset.view === "trends" && !trendsReady) buildTrendsCharts();
     });
   });
   const goToChat = () => {
@@ -87,11 +88,13 @@
     localStorage.setItem("outsight-theme", next);
     applyThemeIcon();
     drawAllGauges();
-    if (chartsReady) {
+    if (chartsReady || trendsReady) {
       chartInstances.forEach(c => c.destroy());
       chartInstances.length = 0;
       chartsReady = false;
+      trendsReady = false;
       if ($("#view-sinais").classList.contains("active")) buildCharts();
+      if ($("#view-trends").classList.contains("active")) buildTrendsCharts();
     }
   });
 
@@ -123,6 +126,45 @@
       chipsEl.appendChild(chip);
     });
     $("#prompt-pilares").appendChild(grupo);
+  });
+
+  // toolbar: limpar e baixar conversa
+  const heroHTML = $("#chat-hero").outerHTML;
+  function rebindHeroChips() {
+    $$("#chat-hero .chip").forEach(chip => {
+      chip.onclick = () => sendMessage(chip.textContent);
+    });
+  }
+  $("#chat-clear").addEventListener("click", () => {
+    if (history.length && !confirm("Limpar toda a conversa?")) return;
+    history.length = 0;
+    chatMessages.innerHTML = "";
+    if (!$("#chat-hero")) {
+      chatMessages.insertAdjacentHTML("beforebegin", heroHTML);
+      rebindHeroChips();
+    }
+  });
+  $("#chat-download").addEventListener("click", () => {
+    if (!history.length) { alert("A conversa ainda está vazia."); return; }
+    const agora = new Date();
+    const pad = n => String(n).padStart(2, "0");
+    const stamp = `${pad(agora.getDate())}/${pad(agora.getMonth() + 1)}/${agora.getFullYear()} ${pad(agora.getHours())}:${pad(agora.getMinutes())}`;
+    const linhas = [
+      "Be OutSight — Conversa com o agente",
+      `Marca: VELLA (demo com dados fictícios) · Exportado em ${stamp}`,
+      "Metodologia Behavior Index © Be Intelligence",
+      "=".repeat(60), ""
+    ];
+    history.forEach(m => {
+      linhas.push(m.role === "user" ? "[Você]" : "[OutSight]");
+      linhas.push(m.content.trim(), "");
+    });
+    const blob = new Blob([linhas.join("\n")], { type: "text/plain;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `outsight-conversa-${agora.getFullYear()}${pad(agora.getMonth() + 1)}${pad(agora.getDate())}-${pad(agora.getHours())}${pad(agora.getMinutes())}.txt`;
+    a.click();
+    URL.revokeObjectURL(a.href);
   });
 
   input.addEventListener("keydown", e => {
@@ -311,6 +353,23 @@
 1. Cápsula "Noiva Civil": Constelação em branco/off-white + acessórios (véu curto, brincos);
 2. Landing própria com prova social real (repostar os casamentos com autorização);
 3. Resolver o medo do tamanho ANTES de escalar: provador virtual — noiva não pode errar o caimento (EE 3,6 no cluster Ocasião Especial).`;
+    }
+    if (s.includes("trend") || s.includes("tendências") && s.includes("radar") || s.includes("surfar")) {
+      return `**Leitura do radar de Trends — o que fazer com cada onda:**
+
+**🏄 Surfar agora:**
+1. **#trenchcoat** (TikTok, +134%, 84M views) — o Maré já está posicionado com BI +2,10. Concentrar mídia e repor estoque.
+2. **"vestido casamento civil"** (Google, +209%) — micro-nicho em explosão que valida a cápsula Noiva Civil antes de qualquer concorrente.
+3. **"plus size inverno"** (Google, +62%) — cruza com as 3.900 buscas internas sem resultado: demanda dentro e fora.
+
+**⚠️ Risco ativo:**
+- **#casacovega** (+340%, sentimento −72) — crescimento explosivo NEGATIVO, mas o volume já recua (7.120 → 4.390 menções/sem): a janela de resposta oficial ainda está aberta.
+
+**👀 Monitorar:**
+- **"frente fria SP"** (X, trending 3x na semana) — gatilho climático que antecipa demanda de casacos em ~48h: usar para timing de campanhas.
+- **#alfaiatariafeminina** (+28%, estável) — sustenta o Ícone e valida a extensão em tons pastel.
+
+⚠️ **Checagem de viés:** efeito manada — nem toda tendência com volume alto é para a VELLA. O filtro é: conecta com um produto do portfólio E move IM ou reduz IE de um cluster? Se não, é ruído.`;
     }
     if (s.includes("campanha")) {
       return `**Qual campanha está dando certo — e para quem:**
@@ -592,6 +651,155 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
     el.textContent = "✦ " + i;
     $("#lojas-insights").appendChild(el);
   });
+
+  /* ---- TRENDS (radar externo) ---- */
+  $("#trends-updated").textContent = "Atualizado " + D.trends.atualizado;
+  $("#sinais-ia").onclick = () =>
+    window.askOutSight("Faça a leitura executiva do painel Sinais & Dados desta semana: cruze KPIs, funil/usabilidade, demanda latente, campanhas e social listening e me dê as 3 decisões mais urgentes, com impacto estimado.");
+  $("#trends-ia").onclick = () =>
+    window.askOutSight("Faça a leitura do radar de Trends fashion desta semana: quais tendências externas a VELLA deve surfar, quais ignorar e quais são risco? Priorize por impacto no Behavior Index e conecte com produtos do portfólio.");
+
+  // sparkline SVG
+  const sparkSVG = (data, color) => {
+    const w = 110, h = 30, max = Math.max(...data), min = Math.min(...data);
+    const pts = data.map((v, i) =>
+      `${(i / (data.length - 1) * w).toFixed(1)},${(h - 3 - ((v - min) / ((max - min) || 1)) * (h - 6)).toFixed(1)}`
+    ).join(" ");
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+  };
+
+  // callouts dos picos
+  D.trends.picos.marcadores.slice().reverse().forEach(m => {
+    const el = document.createElement("div");
+    el.className = "pico-callout " + m.tipo;
+    el.innerHTML = `
+      <div class="pico-head"><span class="pico-letra">${m.letra}</span><span class="pico-titulo">${m.titulo}</span></div>
+      <div class="pico-detalhe">${m.detalhe}</div>`;
+    $("#picos-callouts").appendChild(el);
+  });
+
+  // ranking de tendências
+  const trendsBody = $("#trends-table tbody");
+  D.trends.ranking.forEach(t => {
+    const cor = t.tag === "crise" ? "var(--neg)" : t.crescimento >= 50 ? "var(--pos)" : "var(--cyan)";
+    const tr = document.createElement("tr");
+    if (t.tag === "crise") tr.className = "destaque-crise";
+    if (t.tag === "choque") tr.className = "destaque-oportunidade";
+    tr.innerHTML = `
+      <td><span class="trend-rank">${t.rank}</span></td>
+      <td><span class="trend-termo">${t.termo}</span>${t.tag ? `<span class="trend-tag ${t.tag}">${t.tag === "choque" ? "💥 choque" : t.tag}</span>` : ""}</td>
+      <td><span class="trend-fonte">${t.fonte}</span></td>
+      <td style="font-size:12px;color:var(--txt-2)">${t.volume}<br><span style="font-size:11px;color:var(--txt-3)">${t.posts}</span></td>
+      <td><span class="trend-cresc" style="color:${t.tag === "crise" ? "var(--neg)" : "var(--pos)"}">+${t.crescimento}%</span></td>
+      <td>${sparkSVG(t.spark, cor)}</td>
+      <td><div class="trend-nota">${t.nota}</div></td>
+      <td><button class="btn-ia btn-ia-sm">✦ IA</button></td>`;
+    tr.querySelector(".btn-ia").onclick = () =>
+      window.askOutSight(`Analise a tendência "${t.termo}" (${t.fonte}, +${t.crescimento}% em 12 semanas): o que a VELLA deve fazer com ela? Conecte com produtos, clusters e Behavior Index.`);
+    trendsBody.appendChild(tr);
+  });
+
+  // conversas por categoria
+  const maxMencoes = Math.max(...D.trends.setores.map(s => s.mencoes));
+  D.trends.setores.forEach(s => {
+    const el = document.createElement("div");
+    el.className = "setor-row";
+    const cor = s.delta >= 0 ? "var(--pos)" : "var(--neg)";
+    el.innerHTML = `
+      <span class="setor-nome">${s.setor}</span>
+      <div class="setor-bar"><i style="width:${Math.round(s.mencoes / maxMencoes * 100)}%;background:${cor}"></i></div>
+      <span class="setor-delta" style="color:${cor}">${s.delta >= 0 ? "↑" : "↓"} ${Math.abs(s.delta)}%</span>`;
+    $("#setores-list").appendChild(el);
+  });
+
+  // nuvem de temas
+  const nuvemCor = { pos: "var(--pos)", neg: "var(--neg)", acc: "var(--accent)", acc2: "var(--accent-2)", cyan: "var(--cyan)", warn: "var(--warn)" };
+  D.trends.nuvem.forEach(n => {
+    const el = document.createElement("span");
+    el.textContent = n.t;
+    el.style.fontSize = (11 + n.w * 0.22) + "px";
+    el.style.color = nuvemCor[n.tipo];
+    el.style.opacity = 0.55 + (n.w / 100) * 0.45;
+    el.title = "Analisar com IA";
+    el.onclick = () => window.askOutSight(`O tema "${n.t}" está em destaque nas conversas sobre a VELLA. Qual a leitura e o que fazer?`);
+    $("#nuvem").appendChild(el);
+  });
+
+  let trendsReady = false;
+  function buildTrendsCharts() {
+    trendsReady = true;
+    Chart.defaults.color = cssVar("--txt-2");
+    Chart.defaults.borderColor = cssVar("--chart-grid");
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.font.size = 11;
+
+    // picos com marcadores A/B
+    chartInstances.push(new Chart($("#chart-picos"), {
+      type: "line",
+      data: {
+        labels: D.trends.picos.semanas,
+        datasets: [{
+          data: D.trends.picos.volume,
+          borderColor: cssVar("--accent-2"),
+          backgroundColor: (ctx) => {
+            const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
+            g.addColorStop(0, "rgba(155,92,255,.30)"); g.addColorStop(1, "rgba(155,92,255,0)");
+            return g;
+          },
+          fill: true, tension: .35, pointRadius: 0, borderWidth: 2.2
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: c => c.parsed.y.toLocaleString("pt-BR") + " menções" } }
+        },
+        scales: { y: { ticks: { callback: v => (v / 1000).toFixed(1).replace(".", ",") + "k" } } }
+      },
+      plugins: [{
+        id: "picoMarkers",
+        afterDatasetsDraw(chart) {
+          const { ctx, scales } = chart;
+          D.trends.picos.marcadores.forEach(m => {
+            const x = scales.x.getPixelForValue(m.idx);
+            const y = scales.y.getPixelForValue(D.trends.picos.volume[m.idx]);
+            const cor = m.tipo === "pos" ? cssVar("--pos") : cssVar("--neg");
+            ctx.save();
+            ctx.beginPath(); ctx.arc(x, y - 16, 11, 0, 2 * Math.PI);
+            ctx.fillStyle = cor; ctx.fill();
+            ctx.fillStyle = "#fff"; ctx.font = "800 11px Sora"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillText(m.letra, x, y - 15.5);
+            ctx.strokeStyle = cor; ctx.setLineDash([3, 3]); ctx.lineWidth = 1.2;
+            ctx.beginPath(); ctx.moveTo(x, y - 5); ctx.lineTo(x, scales.y.getPixelForValue(0)); ctx.stroke();
+            ctx.restore();
+          });
+        }
+      }]
+    }));
+
+    // share of voice
+    chartInstances.push(new Chart($("#chart-sov"), {
+      type: "doughnut",
+      data: {
+        labels: D.trends.shareOfVoice.map(s => s.marca),
+        datasets: [{
+          data: D.trends.shareOfVoice.map(s => s.share),
+          backgroundColor: [cssVar("--accent"), cssVar("--accent-2"), cssVar("--cyan"), cssVar("--txt-3")],
+          borderWidth: 2,
+          borderColor: cssVar("--card")
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        cutout: "62%",
+        plugins: {
+          legend: { position: "bottom", labels: { boxWidth: 10, padding: 10 } },
+          tooltip: { callbacks: { label: c => ` ${c.label}: ${c.parsed}%` } }
+        }
+      }
+    }));
+  }
 
   // tabela de produtos
   const tbody = $("#prod-table tbody");
