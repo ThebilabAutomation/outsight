@@ -1,0 +1,9 @@
+{
+  "name": "be-outsight-demo",
+  "version": "1.0.0",
+  "description": "Be OutSight — Inteligência Corporativa Autônoma com Behavior Index (demo fictícia, segmento Fashion)",
+  "private": true,
+  "scripts": {
+    "dev": "npx netlify-cli dev"
+  }
+}

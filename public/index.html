@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Be OutSight — Inteligência Corporativa Autônoma</title>
+  <meta name="description" content="Be OutSight: o agente autônomo que conecta o comportamento interno do e-commerce ao contexto real das ruas. Demo — VELLA Fashion.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔭</text></svg>">
+</head>
+<body>
+
+  <!-- ===== TOPBAR ===== -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">◉</div>
+      <div>
+        <div class="brand-name">Be <span>OutSight</span></div>
+        <div class="brand-tag">A Be Intelligence Spin-off</div>
+      </div>
+    </div>
+    <div class="client-chip">
+      <span class="client-dot"></span>
+      <div>
+        <div class="client-name">VELLA</div>
+        <div class="client-seg">Fashion · E-commerce</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="agent-status"><span class="pulse"></span> Agente ativo · monitorando 5 canais</div>
+    </div>
+  </header>
+
+  <div class="layout">
+
+    <!-- ===== SIDEBAR ===== -->
+    <nav class="sidebar">
+      <button class="nav-btn active" data-view="chat">
+        <span class="nav-ico">💬</span><span class="nav-label">Copilot</span>
+      </button>
+      <button class="nav-btn" data-view="bi">
+        <span class="nav-ico">🧠</span><span class="nav-label">Behavior Index</span>
+      </button>
+      <button class="nav-btn" data-view="sinais">
+        <span class="nav-ico">📡</span><span class="nav-label">Sinais &amp; Dados</span>
+      </button>
+      <button class="nav-btn" data-view="alertas">
+        <span class="nav-ico">⚡</span><span class="nav-label">Alertas</span>
+        <span class="nav-badge" id="alert-count">4</span>
+      </button>
+      <div class="sidebar-footer">
+        <div class="bi-mini" id="bi-mini" title="Behavior Index geral da marca">
+          <div class="bi-mini-label">BI da marca</div>
+          <div class="bi-mini-value" id="bi-mini-value">+0,92</div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main">
+
+      <!-- ========== VIEW: CHAT ========== -->
+      <section class="view active" id="view-chat">
+        <div class="chat-wrap">
+          <div class="chat-col">
+            <div class="chat-scroll" id="chat-scroll">
+              <div class="chat-hero" id="chat-hero">
+                <div class="hero-orb"></div>
+                <h1>Pergunte ao <span class="grad">OutSight</span></h1>
+                <p>Eu conecto o que acontece <strong>dentro da sua loja</strong> ao que acontece <strong>nas ruas</strong> — e devolvo a decisão pronta, sem achismo e sem viés.</p>
+                <div class="prompt-chips" id="prompt-chips"></div>
+              </div>
+              <div id="chat-messages"></div>
+            </div>
+            <div class="chat-input-bar">
+              <textarea id="chat-input" rows="1" placeholder="Pergunte sobre conversão, comportamento, crise, tendências…"></textarea>
+              <button id="chat-send" title="Enviar">➤</button>
+            </div>
+            <div class="chat-disclaimer">Demo com dados fictícios da marca simulada VELLA · Metodologia Behavior Index © Be Intelligence</div>
+          </div>
+
+          <!-- rail direito: BI sempre visível -->
+          <aside class="chat-rail">
+            <div class="rail-card rail-bi">
+              <div class="rail-title">Behavior Index <span class="rail-live">ao vivo</span></div>
+              <div class="gauge-wrap"><canvas id="gauge-rail" width="220" height="130"></canvas>
+                <div class="gauge-value" id="gauge-rail-value">+0,92</div>
+              </div>
+              <div class="gauge-caption">Propensão média à ação · marca VELLA</div>
+              <div class="rail-formula">BI = <b>IM</b> (motivação) − <b>IE</b> (esforço)</div>
+            </div>
+            <div class="rail-card">
+              <div class="rail-title">Extremos da semana</div>
+              <div class="rail-extreme pos">
+                <div class="ex-bi">+2,10</div>
+                <div class="ex-txt"><b>Trench Coat Maré</b><br>Caçadoras de Tendência</div>
+              </div>
+              <div class="rail-extreme neg">
+                <div class="ex-bi">−0,28</div>
+                <div class="ex-txt"><b>Casaco Vega</b><br>pós-viral · inação</div>
+              </div>
+            </div>
+            <div class="rail-card">
+              <div class="rail-title">Alertas ativos</div>
+              <div id="rail-alerts"></div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- ========== VIEW: BEHAVIOR INDEX ========== -->
+      <section class="view" id="view-bi">
+        <div class="view-scroll">
+          <div class="bi-hero">
+            <div class="bi-hero-left">
+              <div class="section-kicker">METODOLOGIA PROPRIETÁRIA · BE INTELLIGENCE</div>
+              <h1>Behavior <span class="grad">Index</span></h1>
+              <p class="bi-hero-sub">A métrica que mede a <b>propensão à ação</b> do seu cliente em cada contexto de decisão — revelando a massa submersa do iceberg: motivações, esforços e vieses que os dashboards tradicionais não enxergam.</p>
+              <div class="bi-formula-card">
+                <div class="f-line"><span class="f-bi">BI</span> = <span class="f-im">IM</span> − <span class="f-ie">IE</span></div>
+                <div class="f-detail">
+                  <div><span class="f-im">IM · Motivação</span> = (Desejo + Necessidade + Urgência) / 3</div>
+                  <div><span class="f-ie">IE · Esforço</span> = (Financeiro + Cognitivo + Físico + Tempo + Emocional) / 5</div>
+                </div>
+                <div class="f-legend">
+                  <span class="lg pos">BI &gt; 0 → ação</span>
+                  <span class="lg neu">BI ≈ 0 → ponto crítico</span>
+                  <span class="lg neg">BI &lt; 0 → inação</span>
+                </div>
+              </div>
+            </div>
+            <div class="bi-hero-right">
+              <div class="gauge-big-wrap">
+                <canvas id="gauge-big" width="340" height="200"></canvas>
+                <div class="gauge-big-value" id="gauge-big-value">+0,92</div>
+                <div class="gauge-big-caption">BI geral · VELLA · últimos 7 dias</div>
+              </div>
+            </div>
+          </div>
+
+          <h2 class="section-title">Diagnóstico por contexto de decisão</h2>
+          <p class="section-sub">Cada card cruza um cluster comportamental com um contexto real de compra. Clique em <b>Analisar com IA</b> para o OutSight aprofundar o diagnóstico.</p>
+          <div class="bi-grid" id="bi-grid"></div>
+
+          <h2 class="section-title">Clusters comportamentais</h2>
+          <div class="cluster-grid" id="cluster-grid"></div>
+        </div>
+      </section>
+
+      <!-- ========== VIEW: SINAIS & DADOS ========== -->
+      <section class="view" id="view-sinais">
+        <div class="view-scroll">
+          <div class="section-kicker">DE DENTRO PARA FORA</div>
+          <h1>Sinais <span class="grad">&amp; Dados</span></h1>
+          <p class="section-sub">O interno (loja) e o externo (ruas) lado a lado — a bolha, estourada.</p>
+
+          <div class="kpi-row" id="kpi-row"></div>
+
+          <div class="charts-grid">
+            <div class="chart-card wide">
+              <div class="chart-title">Receita diária × evento externo <span class="chart-note">últimos 90 dias</span></div>
+              <canvas id="chart-receita"></canvas>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Conversão da loja (%)</div>
+              <canvas id="chart-conversao"></canvas>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Abandono de carrinho (%)</div>
+              <canvas id="chart-abandono"></canvas>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Menções por sentimento <span class="chart-note">8 semanas</span></div>
+              <canvas id="chart-social"></canvas>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Sentimento por canal</div>
+              <canvas id="chart-canais"></canvas>
+            </div>
+          </div>
+
+          <h2 class="section-title">Temas quentes nas ruas</h2>
+          <div class="temas-list" id="temas-list"></div>
+
+          <h2 class="section-title">Radar de produtos</h2>
+          <div class="table-wrap">
+            <table class="prod-table" id="prod-table">
+              <thead><tr>
+                <th>Produto</th><th>Categoria</th><th>Preço</th><th>Conversão</th><th>Δ 7 dias</th><th>Aprovação</th><th>Margem</th><th>Devolução</th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== VIEW: ALERTAS ========== -->
+      <section class="view" id="view-alertas">
+        <div class="view-scroll">
+          <div class="section-kicker">AGENTE AUTÔNOMO · DETECÇÃO CONTÍNUA</div>
+          <h1>Alertas <span class="grad">prescritivos</span></h1>
+          <p class="section-sub">Não avisamos o problema — prescrevemos a solução. Métrica interna + causa externa + ação recomendada + leitura comportamental.</p>
+          <div class="alertas-list" id="alertas-list"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
