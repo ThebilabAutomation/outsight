@@ -10,7 +10,7 @@ const VELLA = (() => {
   const brand = {
     nome: "VELLA",
     segmento: "Fashion • Moda Feminina",
-    canal: "E-commerce próprio (VTEX) + Instagram Shopping",
+    canal: "E-commerce próprio (VTEX) + Instagram Shopping + 4 lojas físicas",
     faturamentoMes: 2847000,
     ticketMedio: 389,
     nps: 62,
@@ -128,6 +128,22 @@ const VELLA = (() => {
       scores: { D: 3.2, N: 3.6, U: 2.0, EF: 2.2, EC: 1.6, EFs: 1.0, ET: 3.8, EE: 2.9 },
       leitura: "A recompra não acontece por falta de urgência e pela memória negativa do frete lento — a última experiência ancora a próxima decisão (heurística da disponibilidade).",
       alavanca: "Programa de acesso antecipado a coleções (urgência + pertencimento) e frete expresso como benefício de fidelidade (reescreve a memória do esforço)."
+    },
+    {
+      id: "clickcollect-classicas",
+      cluster: "Clássicas Conscientes",
+      contexto: "Comprar online e retirar na loja (click & collect)",
+      scores: { D: 3.4, N: 3.3, U: 2.6, EF: 2.2, EC: 1.9, EFs: 2.8, ET: 1.6, EE: 1.4 },
+      leitura: "Trocar esforço de tempo (frete) por esforço físico (ir à loja) compensa para este cluster: a retirada elimina a ansiedade da espera e permite provar/trocar na hora — EE despenca para 1,4.",
+      alavanca: "Promover retirada na loja como default para CEPs próximos às 4 lojas; na retirada, 23% adicionam itens — treinar vendedoras para ativar esse momento."
+    },
+    {
+      id: "plussize-cacadoras",
+      cluster: "Caçadoras de Tendência (plus size)",
+      contexto: "Encontrar numeração G3/G4 nos best-sellers",
+      scores: { D: 4.6, N: 4.0, U: 3.4, EF: 2.8, EC: 4.2, EFs: 1.4, ET: 2.6, EE: 4.6 },
+      leitura: "Motivação altíssima (4,0) — mas o esforço não vem do produto, vem da AUSÊNCIA dele: buscar sem achar (EC 4,2) e a frustração de exclusão (EE 4,6). Demanda reprimida que a concorrência captura.",
+      alavanca: "Cápsula G3/G4 dos 4 best-sellers. São 3.900 buscas internas sem resultado por mês: o cliente já está dentro da loja pedindo o produto."
     }
   ].map(c => ({ ...c, ...makeBI(c.scores) }));
 
@@ -162,6 +178,108 @@ const VELLA = (() => {
       abandono
     });
   }
+
+  /* ---------- PILAR 1 · Usabilidade & Funil (dados "de dentro") ---------- */
+  const usabilidade = {
+    releaseNota: "Release 2.9 do site publicada em 28/jun — novo componente de filtros na listagem de produtos.",
+    funilGeralDevice: [
+      { device: "Mobile", trafego: 68, convGeral: 1.9, produtoCarrinho: 7.1, checkoutCompra: 61 },
+      { device: "Desktop", trafego: 32, convGeral: 3.4, produtoCarrinho: 10.8, checkoutCompra: 74 }
+    ],
+    funilProdutos: [
+      { id: "lume",        produto: "Saia Plissada Lume",        pdpSessoes: 41200, pcDesktop: 9.8,  pcMobileAntes: 9.2,  pcMobileDepois: 5.1, deltaMobile: -44.6, flag: "critico" },
+      { id: "sol",         produto: "Cropped Canelado Sol",      pdpSessoes: 58900, pcDesktop: 12.1, pcMobileAntes: 11.4, pcMobileDepois: 8.3, deltaMobile: -27.2, flag: "critico" },
+      { id: "mare",        produto: "Trench Coat Maré",          pdpSessoes: 74300, pcDesktop: 11.6, pcMobileAntes: 10.9, pcMobileDepois: 10.7, deltaMobile: -1.8, flag: "ok" },
+      { id: "aurora",      produto: "Vestido Midi Aurora",       pdpSessoes: 52100, pcDesktop: 10.2, pcMobileAntes: 9.6,  pcMobileDepois: 9.4,  deltaMobile: -2.1, flag: "ok" },
+      { id: "vega",        produto: "Casaco Oversized Vega",     pdpSessoes: 66800, pcDesktop: 6.1,  pcMobileAntes: 8.8,  pcMobileDepois: 4.2,  deltaMobile: -52.3, flag: "externo" },
+      { id: "constelacao", produto: "Vestido Festa Constelação", pdpSessoes: 28400, pcDesktop: 7.4,  pcMobileAntes: 6.2,  pcMobileDepois: 5.9,  deltaMobile: -4.8, flag: "atencao" }
+    ],
+    issues: [
+      { id: "filtro-mobile", severidade: "critica", titulo: "Filtro de tamanho não aplica no mobile (Saias e Tops)", desde: "28/jun (release 2.9)", impacto: "Produto→carrinho mobile: Lume −44,6%, Sol −27,2%. Perda estimada: R$ 210k/mês.", evidencia: "Session replays mostram 3+ toques no filtro sem resposta; taxa de rage-click 14% na listagem de Saias." },
+      { id: "cep-checkout", severidade: "alta", titulo: "Autocomplete de CEP falha intermitente no checkout mobile", desde: "12/jun", impacto: "2,3% das sessões de checkout travam na etapa de endereço; ~R$ 46k/mês em pedidos perdidos.", evidencia: "1.870 sessões/sem abandonam exatamente no campo CEP; erro de timeout na API de CEP em horário de pico." },
+      { id: "pdp-video", severidade: "media", titulo: "PDPs com vídeo carregam em 4,8s no 4G", desde: "sempre (piorou com vídeos em maio)", impacto: "Bounce 22% maior nas PDPs Constelação e Maré via mobile 4G.", evidencia: "LCP 4,8s vs meta de 2,5s; 71% do tráfego dessas PDPs vem de redes sociais no celular." },
+      { id: "fotos-lume", severidade: "media", titulo: "Fotos da Saia Lume não mostram forro nem caimento", desde: "lançamento", impacto: "34% das menções ao produto citam 'transparente/sem forro' — percepção de baixo valor pelo preço (R$ 289). Sentimento do tema: −38.", evidencia: "Devolução por 'diferente do esperado' 2,1x acima da média; zoom da foto não abre no mobile." }
+    ]
+  };
+
+  /* ---------- PILAR 2 · Demanda Latente (ideias de novos produtos) ---------- */
+  const demandaLatente = [
+    {
+      id: "plussize",
+      tema: "Numeração plus size (G3/G4) nos best-sellers",
+      mencoes: 1240, crescimento4s: 62, sentimento: -12,
+      quote: "\"Amo tudo da VELLA mas paro no G2. Já desisti de 3 carrinhos por isso.\"",
+      cruzamentoInterno: "3.900 buscas internas/mês por 'G3'/'G4' sem resultado; 8,4% de todas as buscas do site.",
+      acao: "Cápsula plus size dos 4 best-sellers (Maré, Aurora, Ícone, Terra). Demanda já validada dentro e fora da loja.",
+      potencial: "alto"
+    },
+    {
+      id: "mare-oliva",
+      tema: "Trench Coat Maré em verde-oliva",
+      mencoes: 487, crescimento4s: 134, sentimento: 81,
+      quote: "\"Se a VELLA lançar o Maré em verde-oliva eu compro no dia. Bege todo mundo tem.\"",
+      cruzamentoInterno: "Maré é o produto com maior BI da marca (+2,10); cor é o pedido nº1 nos comentários dos anúncios.",
+      acao: "Drop limitado verde-oliva aproveitando a onda do produto — escassez real + novidade na cor de maior pedido.",
+      potencial: "alto"
+    },
+    {
+      id: "noiva-civil",
+      tema: "Uso inesperado: Constelação como vestido de casamento civil",
+      mencoes: 312, crescimento4s: 209, sentimento: 88,
+      quote: "\"Casei no civil com o Constelação e recebi mais elogios que no vestidão da festa.\"",
+      cruzamentoInterno: "Picos de venda do Constelação às segundas (pós-fim de semana de casamentos); 18% dos pedidos com CEP ≠ endereço de cobrança (presente).",
+      acao: "Cápsula 'Noiva Civil': Constelação em branco/off-white + acessórios. Nicho de alta margem que a concorrência não viu.",
+      potencial: "choque"
+    },
+    {
+      id: "mare-impermeavel",
+      tema: "Versão impermeável do trench (ciclistas urbanas)",
+      mencoes: 178, crescimento4s: 47, sentimento: 64,
+      quote: "\"Queria o Maré numa versão que aguentasse a garoa da bike até o trabalho.\"",
+      cruzamentoInterno: "Cluster Ritmo Acelerado sobreindexa nas menções; mobilidade ativa cresce nos grandes centros.",
+      acao: "Parceria com tecido tecnológico para linha 'Maré Urbana' — testa demanda via pré-venda.",
+      potencial: "medio"
+    },
+    {
+      id: "alfaiataria-pastel",
+      tema: "Alfaiataria em tons pastel",
+      mencoes: 265, crescimento4s: 38, sentimento: 71,
+      quote: "\"O Ícone em lilás ia ser minha assinatura no trabalho.\"",
+      cruzamentoInterno: "Blazer Ícone tem 91% de aprovação — maior da marca; cor é extensão de baixo risco em produto validado.",
+      acao: "Testar 2 cores (lilás, verde-sálvia) em tiragem curta no drop de primavera.",
+      potencial: "medio"
+    }
+  ];
+
+  /* ---------- PILAR 3 · Campanhas & Mídia (últimos 30 dias) ---------- */
+  const campanhas = [
+    { id: "vella-week", nome: "VELLA Week", canal: "TikTok Ads", clusterAlvo: "Caçadoras de Tendência", investimento: 54000, roas: 6.8, cac: 24, ctr: 3.4, nota: "Melhor ROAS da marca. UGC de creators médios convertendo 2,4x mais que estúdio. O canal da crise é também o canal do lucro.", status: "escalar" },
+    { id: "inverno-essencial", nome: "Inverno Essencial", canal: "Meta Ads (Reels)", clusterAlvo: "Caçadoras de Tendência", investimento: 86000, roas: 4.2, cac: 38, ctr: 2.1, nota: "Criativo vencedor: vídeo UGC com o Trench Maré. Criativos de estúdio com CTR 3x menor.", status: "otimizar" },
+    { id: "alfaiataria-trabalha", nome: "Alfaiataria Que Trabalha", canal: "Google PMax", clusterAlvo: "Ritmo Acelerado", investimento: 71000, roas: 3.1, cac: 41, ctr: 1.8, nota: "Estável e eficiente para fundo de funil; termos de marca inflam levemente o ROAS real.", status: "manter" },
+    { id: "sempre-vella", nome: "Sempre VELLA (institucional)", canal: "Meta + YouTube", clusterAlvo: "Clássicas Conscientes (35–50)", investimento: 62000, roas: 1.4, cac: 96, ctr: 0.9, nota: "DESALINHADA: 61% do engajamento vem de 18–27 anos — a campanha fala com quem já é cliente de outro jeito e não alcança o alvo pretendido.", status: "revisar" },
+    { id: "volta-vella", nome: "Volta pra VELLA (CRM)", canal: "E-mail + WhatsApp", clusterAlvo: "Clássicas Conscientes (recompra)", investimento: 8000, roas: 5.2, cac: 12, ctr: 8.7, nota: "Ótimo ROAS mas alcance pequeno. Objeção nº1 nas respostas: frete. Resolver o frete multiplica este canal.", status: "escalar" }
+  ];
+  const publicoGap = {
+    resumo: "A marca acha que fala com 35–50, mas 58% do engajamento orgânico e 61% do engajamento da campanha institucional vêm de 18–27. O público real é mais jovem que o pretendido — exceto no CRM, onde as Clássicas respondem.",
+    alvoPretendido: { "18–27": 20, "28–38": 35, "39–50": 35, "50+": 10 },
+    publicoReal:    { "18–27": 47, "28–38": 29, "39–50": 18, "50+": 6 }
+  };
+
+  /* ---------- Omnichannel · Lojas físicas ---------- */
+  const lojas = {
+    resumoROPO: "68% das compradoras de loja física visitaram o site nos 7 dias anteriores (ROPO). 14% dos pedidos online são retirados em loja — e na retirada, 23% adicionam itens.",
+    unidades: [
+      { id: "jardins", nome: "SP · Jardins", receitaMes: 512000, visitantesMes: 11400, convLoja: 21, clickCollect: 19, nps: 78 },
+      { id: "centernorte", nome: "SP · Center Norte", receitaMes: 438000, visitantesMes: 14800, convLoja: 17, clickCollect: 11, nps: 66 },
+      { id: "barra", nome: "Rio · Barra", receitaMes: 391000, visitantesMes: 10200, convLoja: 19, clickCollect: 13, nps: 71 },
+      { id: "savassi", nome: "BH · Savassi", receitaMes: 356000, visitantesMes: 7900, convLoja: 24, clickCollect: 16, nps: 82 }
+    ],
+    insights: [
+      "BH Savassi tem a maior conversão (24%): time de vendedoras reduz o Esforço Emocional na prova — influência social bem aplicada.",
+      "Devolução de pedidos online feita NA LOJA gera NPS 74 vs. 58 pelo correio — e 31% saem com nova compra.",
+      "Click & collect elimina o maior atrito do cluster Clássicas (frete/tempo) trocando-o por esforço físico baixo."
+    ]
+  };
 
   /* ---------- Social Listening ---------- */
   const socialSemanas = ["S-8","S-7","S-6","S-5","S-4","S-3","S-2","S-1 (atual)"];
@@ -226,6 +344,36 @@ const VELLA = (() => {
       viesAlerta: "Heurística da disponibilidade em ação: a última experiência ruim de entrega pesa mais na decisão do que 5 experiências boas anteriores."
     },
     {
+      id: "alerta-filtro",
+      severidade: "critica",
+      titulo: "Filtro de tamanho quebrado no mobile derrubou Saias e Tops",
+      metricaInterna: "Desde a release 2.9 (28/jun), produto→carrinho mobile: Saia Lume −44,6% (9,2% → 5,1%) e Cropped Sol −27,2%. Rage-clicks de 14% na listagem. Perda estimada: R$ 210k/mês.",
+      contextoExterno: "Nenhuma menção negativa externa sobre os produtos — o problema é 100% interno. As peças seguem bem avaliadas (Lume 79%, Sol 76%).",
+      recomendacao: "Hotfix ou rollback do componente de filtros da release 2.9 hoje; adicionar teste de regressão mobile no deploy; monitorar produto→carrinho por device como métrica de guarda.",
+      leituraBI: "O Esforço Cognitivo do mobile explodiu: a cliente toca no filtro 3+ vezes sem resposta e desiste. Motivação intacta, esforço artificial — o BI cai sem o produto ter culpa.",
+      viesAlerta: "Heurística da representatividade: a queda 'se parece' com produto que saiu de moda, e o time quase matou a Lume. Sempre separe causa interna (funil) de causa externa (percepção) antes de decidir."
+    },
+    {
+      id: "alerta-plussize",
+      severidade: "oportunidade",
+      titulo: "Demanda reprimida: plus size é venda perdida todo dia",
+      metricaInterna: "3.900 buscas internas/mês por G3/G4 sem nenhum resultado (8,4% de todas as buscas). Carrinhos abandonados após busca de tamanho: 2,3x a média.",
+      contextoExterno: "1.240 menções pedindo numeração plus size (+62% em 4 semanas). Tom de frustração: 'paro no G2'. Concorrentes diretos já lançaram linhas estendidas.",
+      recomendacao: "Cápsula G3/G4 dos 4 best-sellers (Maré, Aurora, Ícone, Terra). A demanda já está validada dentro (busca) e fora (menções) — começar por pré-venda para dimensionar estoque.",
+      leituraBI: "BI do contexto plus size: motivação 4,0 travada por esforço 3,12 — e o esforço é a AUSÊNCIA do produto. É o único contexto onde a marca cria o próprio atrito.",
+      viesAlerta: "Viés de sobrevivência: o dashboard só mostra quem CONSEGUIU comprar. As 3.900 buscas sem resultado são invisíveis na receita — mas são a maior oportunidade da base."
+    },
+    {
+      id: "alerta-institucional",
+      severidade: "media",
+      titulo: "Campanha institucional fala com o público errado",
+      metricaInterna: "'Sempre VELLA': R$ 62k investidos, ROAS 1,4, CAC R$ 96 (2,5x a média). CTR 0,9%.",
+      contextoExterno: "61% do engajamento da campanha vem de 18–27 anos — o alvo era 35–50. No orgânico, o padrão se repete: 58% do engajamento é de 18–27.",
+      recomendacao: "Pausar a veiculação atual; recriar criativos segmentados por cluster (a mensagem que funciona com Clássicas está no CRM, não no feed); realocar 50% da verba para VELLA Week (ROAS 6,8).",
+      leituraBI: "Para as Clássicas, um vídeo institucional no feed não reduz nenhum esforço real (frete, confiança, prova) — não move IM nem IE. O canal certo para elas é CRM + loja.",
+      viesAlerta: "Viés de confirmação: o time de brand mede sucesso por alcance e views — métricas que confirmam a tese da campanha sem testar se o ALVO foi tocado."
+    },
+    {
       id: "alerta-medidas",
       severidade: "media",
       titulo: "Tabela de medidas gera devolução e medo de errar",
@@ -237,17 +385,37 @@ const VELLA = (() => {
     }
   ];
 
-  /* ---------- Prompts sugeridos ---------- */
-  const promptsSugeridos = [
-    "Por que a conversão do Casaco Vega caiu 25%?",
-    "Qual o Behavior Index das Caçadoras de Tendência para o Trench Maré?",
-    "Onde estou perdendo vendas por esforço percebido?",
-    "Que vieses podem estar distorcendo minha leitura dos dados desta semana?",
-    "Monte um plano de 7 dias para responder à crise do zíper.",
-    "Como aumentar a recompra das Clássicas Conscientes?",
-    "Qual produto merece o banner principal e por quê?",
-    "Resuma os sinais externos que o time de PR precisa ver hoje."
+  /* ---------- Prompts sugeridos (3 pilares) ---------- */
+  const promptsPilares = [
+    {
+      pilar: "Problema", icone: "🔍",
+      descricao: "Por que parou de vender? Dados de dentro × dados de fora",
+      prompts: [
+        "Por que a Saia Lume parou de vender? É o produto ou o site?",
+        "Por que a conversão do Casaco Vega caiu 25%?",
+        "Onde estou perdendo vendas por esforço percebido?"
+      ]
+    },
+    {
+      pilar: "Novos produtos", icone: "💡",
+      descricao: "O que o público pede que ainda não existe",
+      prompts: [
+        "Que produtos o público está pedindo que não existem?",
+        "Algum uso inesperado dos nossos produtos virando tendência?",
+        "Onde há demanda reprimida que a concorrência pode capturar?"
+      ]
+    },
+    {
+      pilar: "Público & campanha", icone: "🎯",
+      descricao: "Quem é o público real e o que está dando certo",
+      prompts: [
+        "Qual campanha está dando certo e para quem?",
+        "Minha campanha institucional está falando com quem eu penso?",
+        "Como aumentar a recompra das Clássicas Conscientes?"
+      ]
+    }
   ];
+  const promptsSugeridos = promptsPilares.flatMap(p => p.prompts);
 
-  return { brand, produtos, clusters, biContextos, dias, social, alertas, promptsSugeridos };
+  return { brand, produtos, clusters, biContextos, dias, social, alertas, usabilidade, demandaLatente, campanhas, publicoGap, lojas, promptsPilares, promptsSugeridos };
 })();

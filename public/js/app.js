@@ -79,13 +79,26 @@
   const history = [];
   let waiting = false;
 
-  // chips de prompts sugeridos
-  D.promptsSugeridos.forEach(p => {
-    const chip = document.createElement("button");
-    chip.className = "chip";
-    chip.textContent = p;
-    chip.onclick = () => { input.value = p; sendMessage(); };
-    $("#prompt-chips").appendChild(chip);
+  // chips de prompts agrupados pelos 3 pilares
+  D.promptsPilares.forEach(g => {
+    const grupo = document.createElement("div");
+    grupo.className = "pilar-group";
+    grupo.innerHTML = `
+      <div class="pilar-head">
+        <span class="pilar-ico">${g.icone}</span>
+        <span class="pilar-nome">${g.pilar}</span>
+        <span class="pilar-desc">${g.descricao}</span>
+      </div>
+      <div class="prompt-chips"></div>`;
+    const chipsEl = grupo.querySelector(".prompt-chips");
+    g.prompts.forEach(p => {
+      const chip = document.createElement("button");
+      chip.className = "chip";
+      chip.textContent = p;
+      chip.onclick = () => { input.value = p; sendMessage(); };
+      chipsEl.appendChild(chip);
+    });
+    $("#prompt-pilares").appendChild(grupo);
   });
 
   input.addEventListener("keydown", e => {
@@ -187,6 +200,22 @@
   /* Fallback offline para os prompts principais da demo */
   function offlineAnswer(q) {
     const s = q.toLowerCase();
+    if (s.includes("lume") || (s.includes("parou de vender") && !s.includes("vega"))) {
+      return `**Resposta direta: é o site, não o produto.**
+
+**O que está acontecendo:** o produto→carrinho mobile da Saia Lume caiu **44,6%** (9,2% → 5,1%) desde 28/jun — exatamente a data da release 2.9 do site. O Cropped Sol, da mesma categoria, caiu 27,2% no mesmo dia. No desktop, nada mudou (9,8%).
+
+**Por que (dados de dentro):** o novo filtro de tamanho **não aplica no mobile** em Saias e Tops. Session replays mostram 3+ toques sem resposta e 14% de rage-clicks. Perda estimada: **R$ 210k/mês**.
+
+**E os dados de fora confirmam:** zero menções negativas novas sobre a Lume — a peça segue com 79% de aprovação. Há apenas um tema antigo de percepção de valor (34% das menções citam "sem forro", fotos não mostram o caimento) que explica a devolução 2,1x acima da média, mas não a queda súbita.
+
+**O que fazer:**
+1. Hotfix ou rollback do componente de filtros **hoje**;
+2. Teste de regressão mobile obrigatório no deploy;
+3. Depois do fix: refazer as fotos da PDP mostrando forro (ataca a percepção de valor).
+
+⚠️ **Checagem de viés:** heurística da representatividade — a queda "se parece" com produto fora de moda, e sem o cruzamento interno×externo o time mataria uma peça saudável.`;
+    }
     if (s.includes("vega")) {
       return `**O que está acontecendo:** a conversão do Casaco Oversized Vega caiu **25,3% em 72h** (2,16% → 1,61%), enquanto as sessões na página subiram 38% — curiosidade sem intenção de compra.
 
@@ -233,6 +262,48 @@
 \`\`\`bi-card
 {"contexto":"Recompra em 90 dias","cluster":"Clássicas Conscientes","im":2.93,"ie":2.3,"bi":0.63,"leitura":"Sem urgência e com memória negativa do frete, a recompra não acontece sozinha — é preciso reescrever a experiência."}
 \`\`\``;
+    }
+    if (s.includes("pedindo") || s.includes("não existem") || s.includes("nao existem") || s.includes("demanda reprimida") || s.includes("novos produtos")) {
+      return `**Top 3 produtos que o público pede e a VELLA não tem:**
+
+**1. 🔴 Plus size G3/G4 (a maior)** — 1.240 menções (+62%) com tom de frustração: *"paro no G2"*. Cruzamento interno: **3.900 buscas/mês** por G3/G4 sem nenhum resultado — 8,4% de todas as buscas do site. Carrinho abandonado pós-busca de tamanho: 2,3x a média. *Ação: cápsula G3/G4 dos 4 best-sellers via pré-venda.*
+
+**2. Trench Maré verde-oliva** — 487 menções (+134%, sentimento +81). *"Bege todo mundo tem."* O Maré já é o produto de maior BI da marca (+2,10): cor nova em produto validado é a extensão de menor risco. *Ação: drop limitado.*
+
+**3. 💥 Insight de choque: cápsula "Noiva Civil"** — 312 menções (+209%) de clientes casando no civil com o **Vestido Constelação**. Sinais internos confirmam: picos de venda às segundas e 18% dos pedidos com CEP de entrega diferente da cobrança (presente). Nicho de alta margem que nenhum concorrente viu. *Ação: versão branco/off-white + acessórios.*
+
+⚠️ **Checagem de viés:** viés de sobrevivência — o dashboard de vendas só mostra quem *conseguiu* comprar. A demanda reprimida (plus size) é invisível na receita e por isso é sistematicamente subestimada.`;
+    }
+    if (s.includes("uso inesperado") || s.includes("tendência") && s.includes("produto")) {
+      return `**Sim — e é o insight mais valioso do mês.** 💥
+
+**O que os dados de fora mostram:** 312 menções (+209% em 4 semanas, sentimento +88) de clientes usando o **Vestido Festa Constelação como vestido de casamento civil**. *"Casei no civil com o Constelação e recebi mais elogios que no vestidão da festa."*
+
+**O que os dados de dentro confirmam:** picos de venda às segundas-feiras (pós-fim de semana de casamentos) e 18% dos pedidos com CEP de entrega ≠ endereço de cobrança (compra-presente).
+
+**Por que importa:** casamento civil é um contexto de decisão com Desejo e Urgência altíssimos e baixa sensibilidade a preço — margem premium num nicho que nenhum concorrente mapeou.
+
+**O que fazer:**
+1. Cápsula "Noiva Civil": Constelação em branco/off-white + acessórios (véu curto, brincos);
+2. Landing própria com prova social real (repostar os casamentos com autorização);
+3. Resolver o medo do tamanho ANTES de escalar: provador virtual — noiva não pode errar o caimento (EE 3,6 no cluster Ocasião Especial).`;
+    }
+    if (s.includes("campanha")) {
+      return `**Qual campanha está dando certo — e para quem:**
+
+| Campanha | ROAS | Veredito |
+|---|---|---|
+| VELLA Week (TikTok) | **6,8** | ▲ Escalar — melhor da marca, CAC R$ 24 |
+| Volta pra VELLA (CRM) | 5,2 | ▲ Escalar — resolver frete multiplica |
+| Inverno Essencial (Meta) | 4,2 | ◈ Otimizar — UGC converte 2,4x estúdio |
+| Alfaiataria (PMax) | 3,1 | ● Manter |
+| Sempre VELLA (institucional) | **1,4** | ▼ Revisar — fala com o público errado |
+
+**O problema da institucional:** alvo pretendido 35–50, mas **61% do engajamento vem de 18–27**. CAC de R$ 96 (2,5x a média). As Clássicas Conscientes respondem no CRM (ROAS 5,2) e na loja — não no feed.
+
+**Prescrição:** pausar a Sempre VELLA, realocar 50% da verba para a VELLA Week e recriar a mensagem institucional dentro do CRM/loja, onde o cluster-alvo de fato está.
+
+⚠️ **Checagem de viés:** o time de brand mede a institucional por alcance e views — viés de confirmação: métricas que validam a tese sem testar se o ALVO foi tocado.`;
     }
     if (s.includes("vies") || s.includes("viés") || s.includes("vieses")) {
       return `**Checagem de viés da semana — 3 riscos na leitura dos dados:**
@@ -295,6 +366,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
   window.askOutSight = (prompt) => { goToChat(); sendMessage(prompt); };
 
   /* ================= RAIL: ALERTAS ================= */
+  $("#alert-count").textContent = D.alertas.length;
   const sevColor = { critica: "#ff5c7a", oportunidade: "#2ee6a8", alta: "#ffb547", media: "#4f7cff" };
   D.alertas.forEach(a => {
     const el = document.createElement("div");
@@ -394,6 +466,107 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
       <div class="tema-bar"><i style="width:${pct}%;background:${cor}"></i></div>
       <div class="tema-sent" style="color:${cor}">${t.sentimento > 0 ? "+" : ""}${t.sentimento}</div>`;
     $("#temas-list").appendChild(el);
+  });
+
+  /* ---- PILAR 1: usabilidade ---- */
+  $("#release-nota").textContent = D.usabilidade.releaseNota;
+  const sevIssueColor = { critica: "#ff5c7a", alta: "#ffb547", media: "#4f7cff" };
+  D.usabilidade.issues.forEach(i => {
+    const el = document.createElement("div");
+    el.className = "issue-card";
+    el.style.borderLeftColor = sevIssueColor[i.severidade];
+    el.innerHTML = `
+      <div class="issue-top">
+        <span class="issue-sev" style="color:${sevIssueColor[i.severidade]}">${i.severidade.toUpperCase()}</span>
+        <span class="issue-desde">desde ${i.desde}</span>
+      </div>
+      <div class="issue-titulo">${i.titulo}</div>
+      <div class="issue-impacto">${i.impacto}</div>
+      <div class="issue-evidencia">📎 ${i.evidencia}</div>`;
+    el.onclick = () => window.askOutSight(`Analise o problema de usabilidade "${i.titulo}": qual o impacto no funil, a leitura comportamental e o plano de correção?`);
+    $("#issues-grid").appendChild(el);
+  });
+
+  const diagLabel = { critico: ["🔴 Causa interna (bug filtro)", "#ff5c7a"], externo: ["📡 Causa externa (viral)", "#ffb547"], atencao: ["🟡 Observar (LCP alto)", "#ffb547"], ok: ["🟢 Saudável", "#2ee6a8"] };
+  const funilBody = $("#funil-table tbody");
+  D.usabilidade.funilProdutos.forEach(f => {
+    const tr = document.createElement("tr");
+    if (f.flag === "critico") tr.className = "destaque-crise";
+    const [dl, dc] = diagLabel[f.flag];
+    tr.innerHTML = `
+      <td><b>${f.produto}</b></td>
+      <td>${f.pdpSessoes.toLocaleString("pt-BR")}</td>
+      <td>${f.pcDesktop.toFixed(1).replace(".", ",")}%</td>
+      <td>${f.pcMobileAntes.toFixed(1).replace(".", ",")}%</td>
+      <td>${f.pcMobileDepois.toFixed(1).replace(".", ",")}%</td>
+      <td class="${f.deltaMobile >= -5 ? "delta-pos" : "delta-neg"}">${f.deltaMobile.toFixed(1).replace(".", ",")}%</td>
+      <td style="color:${dc};font-size:12px">${dl}</td>`;
+    funilBody.appendChild(tr);
+  });
+
+  /* ---- PILAR 2: demanda latente ---- */
+  const potLabel = { alto: ["ALTO POTENCIAL", "#2ee6a8"], choque: ["💥 INSIGHT DE CHOQUE", "#9b5cff"], medio: ["MÉDIO", "#4f7cff"] };
+  D.demandaLatente.forEach(dm => {
+    const [pl, pc] = potLabel[dm.potencial];
+    const el = document.createElement("div");
+    el.className = "demanda-card" + (dm.potencial === "choque" ? " choque" : "");
+    el.innerHTML = `
+      <div class="dm-top">
+        <span class="dm-pot" style="color:${pc};border-color:${pc}">${pl}</span>
+        <span class="dm-cresc">+${dm.crescimento4s}% · 4 sem</span>
+      </div>
+      <div class="dm-tema">${dm.tema}</div>
+      <div class="dm-nums">${dm.mencoes.toLocaleString("pt-BR")} menções · sentimento ${dm.sentimento > 0 ? "+" : ""}${dm.sentimento}</div>
+      <div class="dm-quote">${dm.quote}</div>
+      <div class="dm-cruz">🔗 <b>Cruzamento interno:</b> ${dm.cruzamentoInterno}</div>
+      <div class="ctx-alavanca"><b>Ação:</b> ${dm.acao}</div>
+      <div class="ctx-actions"><button class="btn-ia">✦ Analisar com IA</button></div>`;
+    el.querySelector(".btn-ia").onclick = () =>
+      window.askOutSight(`Aprofunde o insight de demanda latente "${dm.tema}": dimensione a oportunidade, riscos, e monte o plano de validação e lançamento.`);
+    $("#demanda-grid").appendChild(el);
+  });
+
+  /* ---- PILAR 3: campanhas ---- */
+  $("#publico-gap-resumo").textContent = D.publicoGap.resumo;
+  const statusLabel = { escalar: ["▲ Escalar", "#2ee6a8"], otimizar: ["◈ Otimizar", "#38d6ff"], manter: ["● Manter", "#93a1bd"], revisar: ["▼ Revisar", "#ff5c7a"] };
+  const campBody = $("#campanhas-table tbody");
+  D.campanhas.forEach(c => {
+    const [sl, sc] = statusLabel[c.status];
+    const tr = document.createElement("tr");
+    if (c.status === "revisar") tr.className = "destaque-crise";
+    if (c.status === "escalar") tr.className = "destaque-oportunidade";
+    tr.innerHTML = `
+      <td><b>${c.nome}</b></td>
+      <td>${c.canal}</td>
+      <td>${c.clusterAlvo}</td>
+      <td>${fmtBRL(c.investimento)}</td>
+      <td><b>${c.roas.toFixed(1).replace(".", ",")}</b></td>
+      <td>R$ ${c.cac}</td>
+      <td style="color:${sc};font-weight:600">${sl}</td>
+      <td style="font-size:12px;color:var(--txt-2);max-width:280px">${c.nota}</td>`;
+    campBody.appendChild(tr);
+  });
+
+  /* ---- Omnichannel ---- */
+  $("#ropo-resumo").textContent = D.lojas.resumoROPO;
+  D.lojas.unidades.forEach(l => {
+    const el = document.createElement("div");
+    el.className = "loja-card";
+    el.innerHTML = `
+      <div class="loja-nome">${l.nome}</div>
+      <div class="loja-receita">${fmtBRL(l.receitaMes)}<span>/mês</span></div>
+      <div class="loja-stats">
+        <div><b>${l.convLoja}%</b><span>conversão</span></div>
+        <div><b>${l.clickCollect}%</b><span>click&collect</span></div>
+        <div><b>${l.nps}</b><span>NPS</span></div>
+      </div>`;
+    $("#lojas-grid").appendChild(el);
+  });
+  D.lojas.insights.forEach(i => {
+    const el = document.createElement("div");
+    el.className = "loja-insight";
+    el.textContent = "✦ " + i;
+    $("#lojas-insights").appendChild(el);
   });
 
   // tabela de produtos

@@ -25,7 +25,7 @@
       <span class="client-dot"></span>
       <div>
         <div class="client-name">VELLA</div>
-        <div class="client-seg">Fashion · E-commerce</div>
+        <div class="client-seg">Fashion · Omnichannel</div>
       </div>
     </div>
     <div class="topbar-right">
@@ -69,8 +69,8 @@
               <div class="chat-hero" id="chat-hero">
                 <div class="hero-orb"></div>
                 <h1>Pergunte ao <span class="grad">OutSight</span></h1>
-                <p>Eu conecto o que acontece <strong>dentro da sua loja</strong> ao que acontece <strong>nas ruas</strong> — e devolvo a decisão pronta, sem achismo e sem viés.</p>
-                <div class="prompt-chips" id="prompt-chips"></div>
+                <p>Eu conecto o que acontece <strong>dentro da sua operação</strong> ao que acontece <strong>nas ruas</strong> — e devolvo a decisão pronta, sem achismo e sem viés.</p>
+                <div id="prompt-pilares"></div>
               </div>
               <div id="chat-messages"></div>
             </div>
@@ -180,6 +180,38 @@
               <canvas id="chart-canais"></canvas>
             </div>
           </div>
+
+          <h2 class="section-title">🔍 Funil &amp; Usabilidade <span class="pilar-tag">Pilar · Problema</span></h2>
+          <p class="section-sub">Dados "de dentro": onde o site — e não o produto — está travando a venda. <span id="release-nota" class="release-nota"></span></p>
+          <div class="issues-grid" id="issues-grid"></div>
+          <div class="table-wrap">
+            <table class="prod-table" id="funil-table">
+              <thead><tr>
+                <th>Produto</th><th>Sessões PDP · 7d</th><th>Produto→Carrinho Desktop</th><th>Mobile (antes 28/jun)</th><th>Mobile (agora)</th><th>Δ Mobile</th><th>Diagnóstico</th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <h2 class="section-title">💡 Demanda latente <span class="pilar-tag">Pilar · Novos produtos</span></h2>
+          <p class="section-sub">O que o público está pedindo — cruzando menções nas redes com buscas internas sem resultado.</p>
+          <div class="demanda-grid" id="demanda-grid"></div>
+
+          <h2 class="section-title">🎯 Campanhas &amp; público real <span class="pilar-tag">Pilar · Público &amp; campanha</span></h2>
+          <p class="section-sub" id="publico-gap-resumo"></p>
+          <div class="table-wrap">
+            <table class="prod-table" id="campanhas-table">
+              <thead><tr>
+                <th>Campanha</th><th>Canal</th><th>Cluster alvo</th><th>Investimento</th><th>ROAS</th><th>CAC</th><th>Status</th><th>Leitura</th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <h2 class="section-title">🏬 Omnichannel · Lojas físicas</h2>
+          <p class="section-sub" id="ropo-resumo"></p>
+          <div class="lojas-grid" id="lojas-grid"></div>
+          <div class="lojas-insights" id="lojas-insights"></div>
 
           <h2 class="section-title">Temas quentes nas ruas</h2>
           <div class="temas-list" id="temas-list"></div>
