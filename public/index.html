@@ -306,21 +306,49 @@
     </main>
   </div>
 
-  <!-- ===== LOGIN (popup) ===== -->
+  <!-- ===== LOGIN (página de entrada) ===== -->
   <div class="auth-overlay hidden" id="auth-overlay">
-    <div class="auth-card">
-      <div class="auth-logo">◉</div>
-      <div class="auth-title">Be <span>OutSight</span></div>
-      <div class="auth-sub">Inteligência corporativa autônoma · acesso restrito</div>
-      <form id="auth-form" autocomplete="on">
-        <label class="auth-label" for="auth-email">E-mail</label>
-        <input class="auth-input" id="auth-email" type="email" required autocomplete="username" placeholder="voce@empresa.com.br">
-        <label class="auth-label" for="auth-pass">Senha</label>
-        <input class="auth-input" id="auth-pass" type="password" required autocomplete="current-password" placeholder="••••••••">
-        <div class="auth-error" id="auth-error"></div>
-        <button class="auth-submit" id="auth-submit" type="submit">Entrar</button>
-      </form>
-      <div class="auth-foot">Demo com dados fictícios · Metodologia Behavior Index © Be Intelligence</div>
+    <div class="auth-page">
+      <!-- lado esquerdo: branding -->
+      <div class="auth-left">
+        <div class="auth-brand">
+          <div class="auth-logo">◉</div>
+          <div>
+            <div class="auth-brand-name">Be <span>OutSight</span></div>
+            <div class="auth-brand-tag">A BE INTELLIGENCE SPIN-OFF</div>
+          </div>
+        </div>
+        <h1 class="auth-headline">Inteligência corporativa autônoma para decidir <span>sem achismo</span>.</h1>
+        <p class="auth-sub">Conectamos o comportamento interno da sua operação ao contexto real das ruas — e devolvemos a decisão pronta, medida pelo Behavior Index.</p>
+        <ul class="auth-bullets">
+          <li><span>✦</span> Behavior Index em tempo real: motivação × esforço em cada contexto de decisão</li>
+          <li><span>✦</span> Causa interna × causa externa separadas em minutos, não em semanas</li>
+          <li><span>✦</span> Recomendações prescritivas com checagem de viés — não mais um dashboard</li>
+        </ul>
+        <div class="auth-bi-chip">
+          <div class="auth-bi-label">BEHAVIOR INDEX · VELLA</div>
+          <div class="auth-bi-value">+0,92</div>
+          <div class="auth-bi-note">propensão à ação · ao vivo</div>
+        </div>
+      </div>
+      <!-- lado direito: acesso -->
+      <div class="auth-right">
+        <div class="auth-card">
+          <div class="auth-card-title">Acesse sua conta</div>
+          <div class="auth-card-sub">Entre com as credenciais fornecidas pela sua equipe.</div>
+          <form id="auth-form" autocomplete="on">
+            <label class="auth-label" for="auth-email">E-mail</label>
+            <input class="auth-input" id="auth-email" type="email" required autocomplete="username" placeholder="voce@empresa.com.br">
+            <label class="auth-label" for="auth-pass">Senha</label>
+            <input class="auth-input" id="auth-pass" type="password" required autocomplete="current-password" placeholder="••••••••">
+            <div class="auth-error" id="auth-error"></div>
+            <button class="auth-submit" id="auth-submit" type="submit">Entrar</button>
+          </form>
+          <div class="auth-foot">Demo com dados fictícios · Metodologia Behavior Index © Be Intelligence</div>
+        </div>
+      </div>
+      <!-- rodapé -->
+      <div class="auth-footer">© 2026 Be Intelligence · Be OutSight — Todos os direitos reservados</div>
     </div>
   </div>
 
