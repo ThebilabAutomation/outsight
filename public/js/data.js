@@ -253,11 +253,11 @@ const VELLA = (() => {
 
   /* ---------- PILAR 3 · Campanhas & Mídia (últimos 30 dias) ---------- */
   const campanhas = [
-    { id: "vella-week", nome: "VELLA Week", canal: "TikTok Ads", clusterAlvo: "Caçadoras de Tendência", investimento: 54000, roas: 6.8, cac: 24, ctr: 3.4, nota: "Melhor ROAS da marca. UGC de creators médios convertendo 2,4x mais que estúdio. O canal da crise é também o canal do lucro.", status: "escalar" },
-    { id: "inverno-essencial", nome: "Inverno Essencial", canal: "Meta Ads (Reels)", clusterAlvo: "Caçadoras de Tendência", investimento: 86000, roas: 4.2, cac: 38, ctr: 2.1, nota: "Criativo vencedor: vídeo UGC com o Trench Maré. Criativos de estúdio com CTR 3x menor.", status: "otimizar" },
-    { id: "alfaiataria-trabalha", nome: "Alfaiataria Que Trabalha", canal: "Google PMax", clusterAlvo: "Ritmo Acelerado", investimento: 71000, roas: 3.1, cac: 41, ctr: 1.8, nota: "Estável e eficiente para fundo de funil; termos de marca inflam levemente o ROAS real.", status: "manter" },
-    { id: "sempre-vella", nome: "Sempre VELLA (institucional)", canal: "Meta + YouTube", clusterAlvo: "Clássicas Conscientes (35–50)", investimento: 62000, roas: 1.4, cac: 96, ctr: 0.9, nota: "DESALINHADA: 61% do engajamento vem de 18–27 anos — a campanha fala com quem já é cliente de outro jeito e não alcança o alvo pretendido.", status: "revisar" },
-    { id: "volta-vella", nome: "Volta pra VELLA (CRM)", canal: "E-mail + WhatsApp", clusterAlvo: "Clássicas Conscientes (recompra)", investimento: 8000, roas: 5.2, cac: 12, ctr: 8.7, nota: "Ótimo ROAS mas alcance pequeno. Objeção nº1 nas respostas: frete. Resolver o frete multiplica este canal.", status: "escalar" }
+    { id: "vella-week", nome: "VELLA Week", canal: "TikTok Ads", clusterAlvo: "Caçadoras de Tendência", investimento: 54000, roas: 6.8, cac: 24, ctr: 3.4, iic: 74, nota: "Melhor ROAS da marca. UGC de creators médios convertendo 2,4x mais que estúdio. O canal da crise é também o canal do lucro.", status: "escalar" },
+    { id: "inverno-essencial", nome: "Inverno Essencial", canal: "Meta Ads (Reels)", clusterAlvo: "Caçadoras de Tendência", investimento: 86000, roas: 4.2, cac: 38, ctr: 2.1, iic: 61, nota: "Criativo vencedor: vídeo UGC com o Trench Maré. Criativos de estúdio com CTR 3x menor.", status: "otimizar" },
+    { id: "alfaiataria-trabalha", nome: "Alfaiataria Que Trabalha", canal: "Google PMax", clusterAlvo: "Ritmo Acelerado", investimento: 71000, roas: 3.1, cac: 41, ctr: 1.8, iic: 58, nota: "Estável e eficiente para fundo de funil; termos de marca inflam levemente o ROAS real.", status: "manter" },
+    { id: "sempre-vella", nome: "Sempre VELLA (institucional)", canal: "Meta + YouTube", clusterAlvo: "Clássicas Conscientes (35–50)", investimento: 62000, roas: 1.4, cac: 96, ctr: 0.9, iic: 22, nota: "DESALINHADA: 61% do engajamento vem de 18–27 anos — a campanha fala com quem já é cliente de outro jeito e não alcança o alvo pretendido.", status: "revisar" },
+    { id: "volta-vella", nome: "Volta pra VELLA (CRM)", canal: "E-mail + WhatsApp", clusterAlvo: "Clássicas Conscientes (recompra)", investimento: 8000, roas: 5.2, cac: 12, ctr: 8.7, iic: 68, nota: "Ótimo ROAS mas alcance pequeno. Objeção nº1 nas respostas: frete. Resolver o frete multiplica este canal.", status: "escalar" }
   ];
   const publicoGap = {
     resumo: "A marca acha que fala com 35–50, mas 58% do engajamento orgânico e 61% do engajamento da campanha institucional vêm de 18–27. O público real é mais jovem que o pretendido — exceto no CRM, onde as Clássicas respondem.",
@@ -385,6 +385,61 @@ const VELLA = (() => {
     }
   ];
 
+  /* ---------- PRIORIDADE PERLA · Saúde da marca & Posicionamento ----------
+     Fonte real: social listening com classificação de atributos por NLP
+     (share de menções positivas por atributo) + série composta semanal. */
+  const brandHealth = {
+    metodologia: "Score 0–100 por atributo = % de menções positivas do atributo na conversa da marca (NLP sobre listening + reviews + SAC).",
+    atributos: [
+      { atributo: "Estilo / tendência",    vella: 78, aura: 71, urbanika: 64 },
+      { atributo: "Qualidade percebida",   vella: 62, aura: 74, urbanika: 58 },
+      { atributo: "Preço justo",           vella: 54, aura: 49, urbanika: 68 },
+      { atributo: "Atendimento / pós-venda", vella: 58, aura: 66, urbanika: 52 },
+      { atributo: "Sustentabilidade",      vella: 41, aura: 63, urbanika: 37 }
+    ],
+    serieSemanas: ["S-7", "S-6", "S-5", "S-4", "S-3", "S-2", "S-1", "Atual"],
+    serieVella: [72, 73, 71, 72, 70, 69, 58, 63],
+    leitura: "A VELLA lidera em estilo, mas perde em qualidade percebida (pós-crise do zíper) e em preço justo — o mercado a lê como 'desejada, porém cara para a qualidade entregue'. Sustentabilidade é o maior gap vs. AURA (41 × 63).",
+    riscos: [
+      { id: "qualidade-lenta", titulo: "Percepção de qualidade em queda lenta (sinal fraco)", detalhe: "Menções 'qualidade caiu / tecido mais fino' cresciam +18% ao mês ANTES do viral do zíper — a crise só acelerou uma tendência que já existia.", fonte: "Listening (série de 6 meses)", severidade: "alta" },
+      { id: "concentracao-canal", titulo: "Concentração de conversa em um canal", detalhe: "41% das menções da marca vêm do TikTok. Uma mudança de algoritmo ou uma crise no canal derruba a visibilidade inteira.", fonte: "Listening (share por canal)", severidade: "media" },
+      { id: "aura-plussize", titulo: "AURA lançou linha plus size há 3 semanas", detalhe: "A concorrente está capturando exatamente a demanda reprimida que a VELLA não atende (3.900 buscas internas/mês sem resultado).", fonte: "Listening concorrência + busca interna", severidade: "alta" }
+    ]
+  };
+
+  /* ---------- PRIORIDADE PERLA · Jornada end-to-end (IE por etapa) ----------
+     Notas 1–5 estimadas pela IA cruzando dados quali + quanti
+     (GA/Hotjar, logística, SAC, reviews) — método validado pela Perla. */
+  const jornada = {
+    metodologia: "IE de cada etapa estimado pela IA cruzando dados observáveis — sem autoavaliação, sem achismo.",
+    etapas: [
+      { etapa: "Descoberta", ie: 1.8, esforcoDominante: "Emocional (2,1)", diagnostico: "Etapa saudável — social e busca performam. EE subiu levemente pós-crise no TikTok.", evidencia: "CTR 2,4% · bounce 38%", fontes: "GA, plataformas de mídia, listening" },
+      { etapa: "Consideração (PDP)", ie: 3.1, esforcoDominante: "Cognitivo (3,8)", diagnostico: "GARGALO Nº 2: fotos que não mostram o produto (Lume), tabela de medidas confusa e PDPs com vídeo lentas (4,8s) forçam a cliente a pesquisar demais.", evidencia: "12% dos contatos do SAC são dúvida de medidas PRÉ-compra", fontes: "Hotjar (rage-clicks), GA, reviews, SAC" },
+      { etapa: "Carrinho / Checkout", ie: 2.6, esforcoDominante: "Cognitivo (3,2)", diagnostico: "Bug do filtro mobile e falha do CEP criam esforço artificial — a motivação existe, o site atrapalha.", evidencia: "Abandono 68% · rage-click 14% na listagem", fontes: "GA (funil), session replays" },
+      { etapa: "Entrega", ie: 3.4, esforcoDominante: "Tempo (4,2)", diagnostico: "GARGALO Nº 1: prazo real de 9+ dias no N/NE. Maior fonte de contatos no SAC e a memória que trava a recompra.", evidencia: "34% dos contatos do SAC · abandono +11 p.p. no N/NE", fontes: "Logística (prazo real), SAC, GA por região" },
+      { etapa: "Pós-venda / Troca", ie: 2.9, esforcoDominante: "Emocional (3,4)", diagnostico: "Troca pelo correio é burocrática (NPS 58) vs. troca na loja (NPS 74, e 31% saem com nova compra). O canal físico é o alívio do esforço.", evidencia: "22% dos contatos do SAC são troca de tamanho", fontes: "SAC, NPS, dados de loja" }
+    ],
+    gargaloPrincipal: "Entrega (ET 4,2) — seguido de Consideração (EC 3,8). Reduzir esses dois esforços vale mais que qualquer campanha nova."
+  };
+
+  /* ---------- PRIORIDADE PERLA · SAC Listening ----------
+     Fonte real: ferramenta de atendimento do cliente (WhatsApp Business,
+     e-mail/tickets) — formato validado pela Perla. */
+  const sac = {
+    captura: "WhatsApp Business + e-mail (tickets), via ferramenta de atendimento do cliente",
+    contatosMes: 4180,
+    taxaContato: 5.7,
+    motivos: [
+      { motivo: "Atraso / prazo de entrega", share: 34, sentimento: -58, obs: "Concentrado no N/NE; cresce +6 p.p. após picos de venda." },
+      { motivo: "Troca de tamanho", share: 22, sentimento: -31, obs: "\"Amei, mas veio pequeno — como troco rápido?\" Troca na loja resolve com NPS 74." },
+      { motivo: "Defeito / qualidade (zíper Vega)", share: 14, sentimento: -72, obs: "Triplicou pós-viral. Cada contato sem resposta pública vira detrator." },
+      { motivo: "Dúvida de medidas (pré-compra)", share: 12, sentimento: -18, obs: "Cliente pergunta ANTES de comprar: é venda em risco, não pós-venda." },
+      { motivo: "Status de pedido", share: 11, sentimento: -9, obs: "Automatizável com tracking proativo no WhatsApp." },
+      { motivo: "Elogios / unboxing", share: 7, sentimento: 82, obs: "Matéria-prima de prova social — pedir autorização para repostar." }
+    ],
+    insight: "O SAC não é centro de custo, é o listening mais honesto da marca: 12% dos contatos são vendas travadas por dúvida de medidas (esforço cognitivo) e 34% são a memória de esforço que mata a recompra (entrega)."
+  };
+
   /* ---------- Trends externos (fashion) — demo fictícia ---------- */
   const trends = {
     atualizado: "há 12 min · fontes simuladas para demo",
@@ -464,5 +519,5 @@ const VELLA = (() => {
   ];
   const promptsSugeridos = promptsPilares.flatMap(p => p.prompts);
 
-  return { brand, produtos, clusters, biContextos, dias, social, alertas, usabilidade, demandaLatente, campanhas, publicoGap, lojas, trends, promptsPilares, promptsSugeridos };
+  return { brand, produtos, clusters, biContextos, dias, social, alertas, usabilidade, demandaLatente, campanhas, publicoGap, lojas, trends, brandHealth, jornada, sac, promptsPilares, promptsSugeridos };
 })();

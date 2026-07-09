@@ -47,7 +47,7 @@
         <span class="nav-ico">💬</span><span class="nav-label">Copilot</span>
       </button>
       <button class="nav-btn" data-view="bi">
-        <span class="nav-ico">🧠</span><span class="nav-label">Behavior Index</span>
+        <span class="nav-ico">🧠</span><span class="nav-label">Consumer Insights</span>
       </button>
       <button class="nav-btn" data-view="sinais">
         <span class="nav-ico">📡</span><span class="nav-label">Sinais &amp; Dados</span>
@@ -126,11 +126,38 @@
       <!-- ========== VIEW: BEHAVIOR INDEX ========== -->
       <section class="view" id="view-bi">
         <div class="view-scroll">
+          <div class="section-kicker">MOTOR COMPORTAMENTAL · BE INTELLIGENCE</div>
+          <h1>Consumer <span class="grad">Insights</span></h1>
+          <p class="section-sub">O motor que decodifica a massa submersa do iceberg — <b>cultura, vieses, crenças e motivações</b> que os dashboards tradicionais não enxergam — e a transforma em decisão. Tudo isso vem antes de qualquer número.</p>
+
+          <div class="lentes-grid">
+            <div class="lente-card">
+              <div class="lente-ico">🌐</div>
+              <div class="lente-nome">Cultura</div>
+              <div class="lente-desc">O contexto e as comunidades que moldam o consumo. Leitura cultural preditiva: identificar a onda antes dela quebrar — como o nicho "casamento civil" descoberto nas conversas.</div>
+            </div>
+            <div class="lente-card">
+              <div class="lente-ico">🧩</div>
+              <div class="lente-nome">Vieses cognitivos</div>
+              <div class="lente-desc">Os atalhos e ciladas da mente — ancoragem, manada, disponibilidade, confirmação — que distorcem tanto a decisão do cliente quanto a leitura dos seus dados. O agente checa ambos.</div>
+            </div>
+            <div class="lente-card">
+              <div class="lente-ico">💭</div>
+              <div class="lente-nome">Crenças &amp; percepções</div>
+              <div class="lente-desc">Percepção é uma fração da realidade. Valor percebido, associações implícitas com a marca e o gap entre o que a empresa diz e o que o mercado entende.</div>
+            </div>
+            <div class="lente-card">
+              <div class="lente-ico">🔥</div>
+              <div class="lente-nome">Motivações</div>
+              <div class="lente-desc">Drivers conscientes e inconscientes — de utilidade funcional a busca por status e pertencimento. O porquê real por trás do clique, da compra e do abandono.</div>
+            </div>
+          </div>
+
           <div class="bi-hero">
             <div class="bi-hero-left">
-              <div class="section-kicker">METODOLOGIA PROPRIETÁRIA · BE INTELLIGENCE</div>
-              <h1>Behavior <span class="grad">Index</span></h1>
-              <p class="bi-hero-sub">A métrica que mede a <b>propensão à ação</b> do seu cliente em cada contexto de decisão — revelando a massa submersa do iceberg: motivações, esforços e vieses que os dashboards tradicionais não enxergam.</p>
+              <div class="section-kicker">FERRAMENTA DE MEDIÇÃO · METODOLOGIA PROPRIETÁRIA</div>
+              <h2 class="bi-tool-title">Behavior <span class="grad">Index</span></h2>
+              <p class="bi-hero-sub">A régua que transforma as quatro lentes em um número acionável: a <b>propensão à ação</b> do cliente em cada contexto de decisão.</p>
               <div class="bi-formula-card">
                 <div class="f-line"><span class="f-bi">BI</span> = <span class="f-im">IM</span> − <span class="f-ie">IE</span></div>
                 <div class="f-detail">
@@ -142,6 +169,7 @@
                   <span class="lg neu">BI ≈ 0 → ponto crítico</span>
                   <span class="lg neg">BI &lt; 0 → inação</span>
                 </div>
+                <div class="f-metodo">As notas são estimadas pela IA cruzando dados quali + quanti — conversas sociais, SAC, avaliações, pesquisas do cliente, GA — sem autoavaliação e sem achismo.</div>
               </div>
             </div>
             <div class="bi-hero-right">
@@ -152,6 +180,26 @@
               </div>
             </div>
           </div>
+
+          <h2 class="section-title">🧭 Jornada end-to-end · esforço por etapa <span class="pilar-tag">Prioridade · Jornada</span></h2>
+          <p class="section-sub" id="jornada-metodologia"></p>
+          <div class="jornada-grid" id="jornada-grid"></div>
+          <div class="jornada-gargalo" id="jornada-gargalo"></div>
+
+          <h2 class="section-title">🏛 Saúde da marca &amp; posicionamento <span class="pilar-tag">Prioridade · Marca</span></h2>
+          <p class="section-sub" id="bh-leitura"></p>
+          <div class="bh-grid">
+            <div class="chart-card">
+              <div class="chart-title">Associações implícitas por marca <span class="chart-note">score 0–100 por atributo · NLP sobre listening</span></div>
+              <div class="bh-atributos" id="bh-atributos"></div>
+            </div>
+            <div class="chart-card">
+              <div class="chart-title">Brand Health Score · VELLA <span class="chart-note">8 semanas</span></div>
+              <canvas id="chart-bh"></canvas>
+            </div>
+          </div>
+          <h3 class="bh-riscos-title">Riscos que a marca não está enxergando</h3>
+          <div class="issues-grid" id="bh-riscos"></div>
 
           <h2 class="section-title">Diagnóstico por contexto de decisão</h2>
           <p class="section-sub">Cada card cruza um cluster comportamental com um contexto real de compra. Clique em <b>Analisar com IA</b> para o OutSight aprofundar o diagnóstico.</p>
@@ -215,16 +263,22 @@
           <p class="section-sub">O que o público está pedindo — cruzando menções nas redes com buscas internas sem resultado.</p>
           <div class="demanda-grid" id="demanda-grid"></div>
 
-          <h2 class="section-title">🎯 Campanhas &amp; público real <span class="pilar-tag">Pilar · Público &amp; campanha</span></h2>
+          <h2 class="section-title">🎯 Campanhas &amp; público real <span class="pilar-tag">Prioridade · Marketing</span></h2>
           <p class="section-sub" id="publico-gap-resumo"></p>
           <div class="table-wrap">
             <table class="prod-table" id="campanhas-table">
               <thead><tr>
-                <th>Campanha</th><th>Canal</th><th>Cluster alvo</th><th>Investimento</th><th>ROAS</th><th>CAC</th><th>Status</th><th>Leitura</th>
+                <th>Campanha</th><th>Canal</th><th>Cluster alvo</th><th>Investimento</th><th>ROAS</th><th>CAC</th><th>IIC</th><th>Status</th><th>Leitura</th>
               </tr></thead>
               <tbody></tbody>
             </table>
           </div>
+          <p class="iic-nota">IIC · Índice de Intenção de Compra (0–100): composto de CTR qualificado + taxa de add-to-cart do tráfego da campanha + brand lift quando disponível.</p>
+
+          <h2 class="section-title">📞 SAC Listening <span class="pilar-tag">a rua mais honesta</span></h2>
+          <p class="section-sub" id="sac-resumo"></p>
+          <div class="sac-grid" id="sac-grid"></div>
+          <div class="loja-insight" id="sac-insight"></div>
 
           <h2 class="section-title">🏬 Omnichannel · Lojas físicas</h2>
           <p class="section-sub" id="ropo-resumo"></p>

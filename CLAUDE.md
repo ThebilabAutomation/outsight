@@ -33,6 +33,15 @@ Toda feature nova deve servir a pelo menos um pilar:
 2. **Novos produtos** — demanda latente cruzando menções externas com buscas internas (plus size, Maré verde-oliva, "Noiva Civil").
 3. **Público & campanha** — público real vs. pretendido, ROAS por cluster.
 
+## Decisões da Perla (validadas em 09/jul, WhatsApp + áudios)
+
+- **Nome**: o módulo é **"Consumer Insights"**; o Behavior Index é UMA ferramenta de medição dentro dele. As 4 lentes (cultura, vieses, crenças, motivações) vêm ANTES do BI na apresentação.
+- **Posicionamento**: o diferencial NÃO é diagnóstico de performance/growth (commodity — outras IAs agênticas já fazem). É **substituir o investimento em pesquisa** que a indústria faz e o e-commerce médio não tem margem para fazer: posicionamento, novos produtos, jornadas. Discurso de "pesquisa democratizada".
+- **Notas do BI na prática**: a IA estima cada nota de motivação/esforço cruzando dados quali + quanti (conversas sociais, SAC, avaliações, pesquisas do cliente, GA). Nunca autoavaliação.
+- **IIC (Índice de Intenção de Compra)**: composto de CTR qualificado + add-to-cart do tráfego + brand lift. Aprovado.
+- **Prioridades da demo**: Posicionamento/Marca, Marketing e Jornada.
+- **SAC listening**: coleta via ferramenta do cliente (WhatsApp Business e afins), com acesso aos dados do cliente.
+
 ## Views da interface
 
 Copilot (chat) · Behavior Index · Sinais & Dados · **Trends** (radar externo fashion: picos anotados A/B com callouts de drivers, ranking com sparklines SVG, share of voice, conversas por categoria, nuvem de temas) · Alertas. Trends é 100% fictício por decisão de produto — APIs reais (Google Trends alpha, TikTok Commercial Content API, X pago) ficam para o roadmap de produção via Netlify Functions dedicadas.

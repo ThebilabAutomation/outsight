@@ -22,6 +22,7 @@
       $("#view-" + btn.dataset.view).classList.add("active");
       if (btn.dataset.view === "sinais" && !chartsReady) buildCharts();
       if (btn.dataset.view === "trends" && !trendsReady) buildTrendsCharts();
+      if (btn.dataset.view === "bi" && !biChartsReady) buildBiCharts();
     });
   });
   const goToChat = () => {
@@ -88,13 +89,15 @@
     localStorage.setItem("outsight-theme-v2", next);
     applyThemeIcon();
     drawAllGauges();
-    if (chartsReady || trendsReady) {
+    if (chartsReady || trendsReady || biChartsReady) {
       chartInstances.forEach(c => c.destroy());
       chartInstances.length = 0;
       chartsReady = false;
       trendsReady = false;
+      biChartsReady = false;
       if ($("#view-sinais").classList.contains("active")) buildCharts();
       if ($("#view-trends").classList.contains("active")) buildTrendsCharts();
+      if ($("#view-bi").classList.contains("active")) buildBiCharts();
     }
   });
 
@@ -331,6 +334,39 @@
 \`\`\`bi-card
 {"contexto":"Recompra em 90 dias","cluster":"Clássicas Conscientes","im":2.93,"ie":2.3,"bi":0.63,"leitura":"Sem urgência e com memória negativa do frete, a recompra não acontece sozinha — é preciso reescrever a experiência."}
 \`\`\``;
+    }
+    if (s.includes("saúde da marca") || s.includes("saude da marca") || s.includes("posicionamento") || s.includes("reputação") || s.includes("reputacao")) {
+      return `**Saúde da marca VELLA — leitura de posicionamento:**
+
+**Brand Health Score: 63** (era 72 antes do viral; caiu a 58 no pico da crise e está recuperando).
+
+**Como o mercado lê a VELLA** (associações implícitas vs. concorrentes): *"desejada, porém cara para a qualidade entregue"*.
+- **Estilo/tendência 78** — lidera a categoria ✓
+- **Qualidade percebida 62** vs. AURA 74 — ferida da crise do zíper
+- **Preço justo 54** vs. Urbanika 68 — percepção de valor pressionada
+- **Sustentabilidade 41** vs. AURA 63 — o maior gap estrutural
+
+**⚠️ Riscos que a marca não está enxergando:**
+1. A percepção "qualidade caiu" crescia **+18%/mês ANTES do viral** — a crise só acelerou um sinal fraco que já existia;
+2. **41% das menções vêm de um único canal** (TikTok) — risco de concentração;
+3. **AURA lançou plus size há 3 semanas** — capturando as 3.900 buscas/mês que a VELLA ignora.
+
+**Prescrição:** responder a crise ataca o sintoma; o posicionamento exige plano de qualidade percebida (transparência de materiais + reviews em destaque) e decisão rápida no plus size antes que a AURA consolide o território.`;
+    }
+    if (s.includes("gargalo") || s.includes("jornada")) {
+      return `**Gargalos da jornada end-to-end** (IE por etapa, estimado pela IA sobre dados observáveis — GA/Hotjar, logística, SAC):
+
+| Etapa | IE | Diagnóstico |
+|---|---|---|
+| Descoberta | 1,8 🟢 | Saudável |
+| Consideração (PDP) | **3,1** 🔴 | Gargalo nº 2 — esforço cognitivo 3,8 |
+| Carrinho/Checkout | 2,6 🟡 | Esforço artificial (bugs) |
+| **Entrega** | **3,4** 🔴 | **Gargalo nº 1 — esforço de tempo 4,2** |
+| Pós-venda/Troca | 2,9 🟡 | Troca correio NPS 58 vs. loja 74 |
+
+**Os dois gargalos que valem mais que qualquer campanha nova:**
+1. **Entrega (ET 4,2)**: 9+ dias no N/NE, 34% dos contatos do SAC, e a memória de esforço que mata a recompra. *Ação: prazo real na PDP, hub em Recife, click & collect como default.*
+2. **Consideração (EC 3,8)**: fotos que não mostram o produto, medidas confusas (12% dos contatos do SAC são dúvidas PRÉ-compra = venda em risco), PDPs lentas. *Ação: refazer fotos da Lume, provador virtual, otimizar LCP.*`;
     }
     if (s.includes("pedindo") || s.includes("não existem") || s.includes("nao existem") || s.includes("demanda reprimida") || s.includes("novos produtos")) {
       return `**Top 3 produtos que o público pede e a VELLA não tem:**
@@ -628,6 +664,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
       <td>${fmtBRL(c.investimento)}</td>
       <td><b>${c.roas.toFixed(1).replace(".", ",")}</b></td>
       <td>R$ ${c.cac}</td>
+      <td><b style="color:${c.iic >= 60 ? 'var(--pos)' : c.iic >= 40 ? 'var(--warn)' : 'var(--neg)'}">${c.iic}</b></td>
       <td style="color:${sc};font-weight:600">${sl}</td>
       <td style="font-size:12px;color:var(--txt-2);max-width:280px">${c.nota}</td>`;
     campBody.appendChild(tr);
@@ -654,6 +691,81 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
     el.textContent = "✦ " + i;
     $("#lojas-insights").appendChild(el);
   });
+
+  /* ---- CONSUMER INSIGHTS: jornada end-to-end (IE por etapa) ---- */
+  $("#jornada-metodologia").textContent = D.jornada.metodologia;
+  const ieColor = v => v >= 3.2 ? "var(--neg)" : v >= 2.5 ? "var(--warn)" : "var(--pos)";
+  D.jornada.etapas.forEach((e, i) => {
+    const el = document.createElement("div");
+    el.className = "jornada-card";
+    el.innerHTML = `
+      <div class="j-step">${i + 1}</div>
+      <div class="j-etapa">${e.etapa}</div>
+      <div class="j-ie" style="color:${ieColor(e.ie)}">IE ${e.ie.toFixed(1).replace(".", ",")}</div>
+      <div class="j-dominante">${e.esforcoDominante}</div>
+      <div class="j-diag">${e.diagnostico}</div>
+      <div class="j-evid">📎 ${e.evidencia}</div>
+      <div class="j-fontes">Fontes: ${e.fontes}</div>`;
+    el.onclick = () => window.askOutSight(`Aprofunde a etapa "${e.etapa}" da jornada (IE ${e.ie.toFixed(1).replace(".", ",")}): o que explica o esforço, e qual o plano para reduzi-lo?`);
+    $("#jornada-grid").appendChild(el);
+  });
+  $("#jornada-gargalo").innerHTML = `<b>Gargalo principal:</b> ${D.jornada.gargaloPrincipal}`;
+
+  /* ---- CONSUMER INSIGHTS: saúde da marca ---- */
+  $("#bh-leitura").textContent = D.brandHealth.leitura;
+  D.brandHealth.atributos.forEach(a => {
+    const el = document.createElement("div");
+    el.className = "bh-attr-row";
+    const marcas = [
+      ["VELLA", a.vella, "var(--accent)"],
+      ["AURA", a.aura, "var(--accent-2)"],
+      ["Urbanika", a.urbanika, "var(--txt-3)"]
+    ];
+    el.innerHTML = `
+      <div class="bh-attr-nome">${a.atributo}</div>
+      <div class="bh-attr-bars">
+        ${marcas.map(([m, v, c]) => `
+          <div class="bh-bar-row">
+            <span class="bh-marca">${m}</span>
+            <div class="bh-bar"><i style="width:${v}%;background:${c}"></i></div>
+            <span class="bh-val">${v}</span>
+          </div>`).join("")}
+      </div>`;
+    $("#bh-atributos").appendChild(el);
+  });
+  const sevRiscoColor = { alta: "var(--neg)", media: "var(--warn)" };
+  D.brandHealth.riscos.forEach(r => {
+    const el = document.createElement("div");
+    el.className = "issue-card";
+    el.style.borderLeftColor = sevRiscoColor[r.severidade];
+    el.innerHTML = `
+      <div class="issue-top">
+        <span class="issue-sev" style="color:${sevRiscoColor[r.severidade]}">RISCO ${r.severidade.toUpperCase()}</span>
+      </div>
+      <div class="issue-titulo">${r.titulo}</div>
+      <div class="issue-impacto">${r.detalhe}</div>
+      <div class="issue-evidencia">📎 Fonte: ${r.fonte}</div>`;
+    el.onclick = () => window.askOutSight(`Analise o risco de marca "${r.titulo}": qual o impacto potencial e como mitigar?`);
+    $("#bh-riscos").appendChild(el);
+  });
+
+  /* ---- SINAIS: SAC listening ---- */
+  $("#sac-resumo").textContent = `${D.sac.contatosMes.toLocaleString("pt-BR")} contatos/mês (${String(D.sac.taxaContato).replace(".", ",")}% dos pedidos) · Captura: ${D.sac.captura}.`;
+  D.sac.motivos.forEach(m => {
+    const cor = m.sentimento >= 0 ? "var(--pos)" : "var(--neg)";
+    const el = document.createElement("div");
+    el.className = "sac-card";
+    el.innerHTML = `
+      <div class="sac-top">
+        <span class="sac-share">${m.share}%</span>
+        <span class="sac-sent" style="color:${cor}">${m.sentimento > 0 ? "+" : ""}${m.sentimento}</span>
+      </div>
+      <div class="sac-motivo">${m.motivo}</div>
+      <div class="sac-obs">${m.obs}</div>`;
+    el.onclick = () => window.askOutSight(`No SAC, "${m.motivo}" representa ${m.share}% dos contatos. Qual a leitura comportamental e o que fazer?`);
+    $("#sac-grid").appendChild(el);
+  });
+  $("#sac-insight").textContent = "✦ " + D.sac.insight;
 
   /* ---- TRENDS (radar externo) ---- */
   $("#trends-updated").textContent = "Atualizado " + D.trends.atualizado;
@@ -727,6 +839,39 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
     el.onclick = () => window.askOutSight(`O tema "${n.t}" está em destaque nas conversas sobre a VELLA. Qual a leitura e o que fazer?`);
     $("#nuvem").appendChild(el);
   });
+
+  let biChartsReady = false;
+  function buildBiCharts() {
+    biChartsReady = true;
+    Chart.defaults.color = cssVar("--txt-2");
+    Chart.defaults.borderColor = cssVar("--chart-grid");
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.font.size = 11;
+    chartInstances.push(new Chart($("#chart-bh"), {
+      type: "line",
+      data: {
+        labels: D.brandHealth.serieSemanas,
+        datasets: [{
+          data: D.brandHealth.serieVella,
+          borderColor: cssVar("--accent"),
+          backgroundColor: (ctx) => {
+            const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 220);
+            g.addColorStop(0, "rgba(16,185,129,.22)"); g.addColorStop(1, "rgba(16,185,129,0)");
+            return g;
+          },
+          fill: true, tension: .35, pointRadius: 3, borderWidth: 2.2
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: c => "Brand Health: " + c.parsed.y } }
+        },
+        scales: { y: { min: 40, max: 90 } }
+      }
+    }));
+  }
 
   let trendsReady = false;
   function buildTrendsCharts() {
