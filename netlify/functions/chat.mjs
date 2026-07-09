@@ -141,16 +141,42 @@ Regra de leitura de trends: só recomendar surfar uma tendência se ela conectar
 - Seja conciso: máximo ~350 palavras por resposta (fora o bi-card). Use bullets e negrito com moderação.
 - Se perguntarem algo fora do escopo (dados de outra empresa, temas não relacionados), redirecione com elegância para o contexto da VELLA.`;
 
+/* Supabase Auth — proteção do endpoint.
+   Valores públicos (anon/publishable key). Enquanto estiverem com
+   placeholder, a validação fica DESATIVADA (rollout seguro).
+   Podem ser sobrescritos por env vars no Netlify. */
+const SUPABASE_URL = process.env.SUPABASE_URL || "COLE_AQUI_A_PROJECT_URL";
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "COLE_AQUI_A_PUBLISHABLE_KEY";
+const AUTH_ENABLED = !SUPABASE_URL.includes("COLE_AQUI") && !SUPABASE_ANON_KEY.includes("COLE_AQUI");
+
 export default async (req) => {
   const cors = {
     "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Methods": "POST, OPTIONS"
   };
 
   if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
   if (req.method !== "POST") {
     return Response.json({ error: "Method not allowed" }, { status: 405, headers: cors });
+  }
+
+  // valida a sessão do usuário (Supabase) antes de gastar tokens da OpenAI
+  if (AUTH_ENABLED) {
+    const token = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
+    if (!token) {
+      return Response.json({ error: "Faça login para conversar com o agente." }, { status: 401, headers: cors });
+    }
+    try {
+      const vr = await fetch(`${SUPABASE_URL}/auth/v1/user`, {
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` }
+      });
+      if (!vr.ok) {
+        return Response.json({ error: "Sessão expirada — entre novamente." }, { status: 401, headers: cors });
+      }
+    } catch {
+      return Response.json({ error: "Falha ao validar a sessão. Tente de novo." }, { status: 503, headers: cors });
+    }
   }
 
   const apiKey = process.env.OPENAI_API_KEY;

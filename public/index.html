@@ -31,6 +31,10 @@
     </div>
     <div class="topbar-right">
       <div class="agent-status"><span class="pulse"></span> Agente ativo · monitorando 5 canais</div>
+      <div class="user-chip" id="user-chip" hidden>
+        <span class="user-email" id="user-email"></span>
+        <button id="logout-btn" title="Sair da conta">Sair</button>
+      </div>
       <button id="theme-toggle" class="theme-toggle" title="Alternar tema claro/escuro"><span id="theme-icon">☀️</span></button>
     </div>
   </header>
@@ -302,9 +306,30 @@
     </main>
   </div>
 
+  <!-- ===== LOGIN (popup) ===== -->
+  <div class="auth-overlay hidden" id="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-logo">◉</div>
+      <div class="auth-title">Be <span>OutSight</span></div>
+      <div class="auth-sub">Inteligência corporativa autônoma · acesso restrito</div>
+      <form id="auth-form" autocomplete="on">
+        <label class="auth-label" for="auth-email">E-mail</label>
+        <input class="auth-input" id="auth-email" type="email" required autocomplete="username" placeholder="voce@empresa.com.br">
+        <label class="auth-label" for="auth-pass">Senha</label>
+        <input class="auth-input" id="auth-pass" type="password" required autocomplete="current-password" placeholder="••••••••">
+        <div class="auth-error" id="auth-error"></div>
+        <button class="auth-submit" id="auth-submit" type="submit">Entrar</button>
+      </form>
+      <div class="auth-foot">Demo com dados fictícios · Metodologia Behavior Index © Be Intelligence</div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>

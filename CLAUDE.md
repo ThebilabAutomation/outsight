@@ -35,6 +35,14 @@ Copilot (chat) · Behavior Index · Sinais & Dados · **Trends** (radar externo 
 
 Chat tem toolbar com "Baixar conversa" (.txt) e "Limpar" (restaura o hero com os chips). Sinais & Dados e Trends têm botão "✦ Pedir leitura da IA" no header. Gráficos são lazy (`buildCharts`/`buildTrendsCharts` + flags `chartsReady`/`trendsReady`) e reconstruídos na troca de tema via `chartInstances`.
 
+## Autenticação (Supabase)
+
+- Login por e-mail/senha via popup (`public/js/auth.js` + modal no index.html). Config pública em `public/js/config.js` (SUPABASE_URL + publishable/anon key — são valores públicos por design, podem ser commitados).
+- **Rollout seguro**: enquanto o config estiver com placeholder `COLE_AQUI_*`, o gate fica DESATIVADO (app abre direto e a function não exige token). Ao preencher, o gate ativa em front e back.
+- A function `chat.mjs` valida o token (`Authorization: Bearer`) contra `{SUPABASE_URL}/auth/v1/user` antes de chamar a OpenAI — protege os créditos. Mesmos valores no topo do chat.mjs (ou env vars SUPABASE_URL/SUPABASE_ANON_KEY no Netlify, que têm precedência).
+- Sem cadastro na UI: usuários são criados no dashboard do Supabase (Authentication → Users → Add user, com auto-confirm). Projeto Supabase: "Outsight project" (org ThebilabAutomation) — NÃO acessível pelo MCP conectado (que enxerga outra conta).
+- Sessão persiste via supabase-js (localStorage); logout no chip do usuário no topbar.
+
 ## Arquitetura
 
 - **Site estático** em `public/` — vanilla JS, sem build. Chart.js e marked.js via CDN.

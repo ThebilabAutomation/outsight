@@ -238,7 +238,10 @@
     try {
       const resp = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(window.outsightToken ? { Authorization: "Bearer " + window.outsightToken } : {})
+        },
         body: JSON.stringify({ messages: history })
       });
       const data = await resp.json();
