@@ -4,6 +4,10 @@ Demo funcional do **Be OutSight** (spin-off da Be Intelligence): agente de IA co
 
 **Live:** https://beoutsight.netlify.app · **Repo:** https://github.com/ThebilabAutomation/outsight
 
+## Regra nº 0: reprodutibilidade com dados reais (decisão do Antonio, 09/jul)
+
+**Nenhuma análise, insight ou métrica entra na demo se não for reproduzível com dados reais coletáveis.** Antes de adicionar qualquer coisa, responder: (1) qual a fonte real (GA/Hotjar, CRM, ERP, social listening, SAC, pesquisa, ads platform)? (2) como o número é calculado na prática? (3) a coleta é viável para e-commerce de médio porte? Se falhar em algum, ajustar ou descartar. Itens que exigem definição metodológica (ex: operacionalização das notas do BI, índice de intenção de compra) devem ser validados com a Perla antes de virar feature. Engenharia de dados vem antes de UI bonita.
+
 ## Regra de ouro: consistência de dados em 3 lugares
 
 Os números da demo existem em **três lugares que DEVEM estar sempre sincronizados**. Qualquer mudança de dado exige atualizar os três:
