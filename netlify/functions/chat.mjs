@@ -145,8 +145,8 @@ Regra de leitura de trends: só recomendar surfar uma tendência se ela conectar
    Valores públicos (anon/publishable key). Enquanto estiverem com
    placeholder, a validação fica DESATIVADA (rollout seguro).
    Podem ser sobrescritos por env vars no Netlify. */
-const SUPABASE_URL = process.env.SUPABASE_URL || "COLE_AQUI_A_PROJECT_URL";
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "COLE_AQUI_A_PUBLISHABLE_KEY";
+const SUPABASE_URL = process.env.SUPABASE_URL || "https://uxhznmztpcxtmnolishc.supabase.co";
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "sb_publishable_AHSo3usl9vaQOdRO2R0R3g_2-iTZASD";
 const AUTH_ENABLED = !SUPABASE_URL.includes("COLE_AQUI") && !SUPABASE_ANON_KEY.includes("COLE_AQUI");
 
 export default async (req) => {

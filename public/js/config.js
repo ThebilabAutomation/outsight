@@ -5,6 +5,6 @@
    e o app abre direto (modo demo aberto).
    ============================================================ */
 window.OUTSIGHT_CONFIG = {
-  SUPABASE_URL: "COLE_AQUI_A_PROJECT_URL",        // ex: https://xxxx.supabase.co
-  SUPABASE_ANON_KEY: "COLE_AQUI_A_PUBLISHABLE_KEY" // sb_publishable_... ou anon key (JWT)
+  SUPABASE_URL: "https://uxhznmztpcxtmnolishc.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_AHSo3usl9vaQOdRO2R0R3g_2-iTZASD"
 };
