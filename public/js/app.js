@@ -85,7 +85,7 @@
   $("#theme-toggle").addEventListener("click", () => {
     const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
     document.documentElement.dataset.theme = next;
-    localStorage.setItem("outsight-theme", next);
+    localStorage.setItem("outsight-theme-v2", next);
     applyThemeIcon();
     drawAllGauges();
     if (chartsReady || trendsReady) {
@@ -743,7 +743,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
           borderColor: cssVar("--accent-2"),
           backgroundColor: (ctx) => {
             const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
-            g.addColorStop(0, "rgba(155,92,255,.30)"); g.addColorStop(1, "rgba(155,92,255,0)");
+            g.addColorStop(0, "rgba(132,204,22,.22)"); g.addColorStop(1, "rgba(132,204,22,0)");
             return g;
           },
           fill: true, tension: .35, pointRadius: 0, borderWidth: 2.2
@@ -768,7 +768,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
             ctx.save();
             ctx.beginPath(); ctx.arc(x, y - 16, 11, 0, 2 * Math.PI);
             ctx.fillStyle = cor; ctx.fill();
-            ctx.fillStyle = "#fff"; ctx.font = "800 11px Sora"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+            ctx.fillStyle = "#fff"; ctx.font = "800 11px 'Plus Jakarta Sans'"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
             ctx.fillText(m.letra, x, y - 15.5);
             ctx.strokeStyle = cor; ctx.setLineDash([3, 3]); ctx.lineWidth = 1.2;
             ctx.beginPath(); ctx.moveTo(x, y - 5); ctx.lineTo(x, scales.y.getPixelForValue(0)); ctx.stroke();
@@ -785,7 +785,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
         labels: D.trends.shareOfVoice.map(s => s.marca),
         datasets: [{
           data: D.trends.shareOfVoice.map(s => s.share),
-          backgroundColor: [cssVar("--accent"), cssVar("--accent-2"), cssVar("--cyan"), cssVar("--txt-3")],
+          backgroundColor: [cssVar("--accent"), cssVar("--accent-2"), cssVar("--warn"), cssVar("--txt-3")],
           borderWidth: 2,
           borderColor: cssVar("--card")
         }]
@@ -845,7 +845,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
           borderColor: cssVar("--accent"),
           backgroundColor: (ctx) => {
             const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 280);
-            g.addColorStop(0, "rgba(79,124,255,.35)"); g.addColorStop(1, "rgba(79,124,255,0)");
+            g.addColorStop(0, "rgba(16,185,129,.25)"); g.addColorStop(1, "rgba(16,185,129,0)");
             return g;
           },
           fill: true, tension: .35, pointRadius: 0, borderWidth: 2

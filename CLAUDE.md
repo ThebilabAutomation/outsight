@@ -44,7 +44,9 @@ Chat tem toolbar com "Baixar conversa" (.txt) e "Limpar" (restaura o hero com os
 
 ## Tema claro/escuro
 
-- **Todas as cores via CSS vars** em `:root` (dark, padrão) e `:root[data-theme="light"]` em `style.css`. NUNCA hardcodar hex em estilos inline no app.js — usar `"var(--pos)"` etc.
+- **Direção de design (decisão do Antonio, 09/jul)**: linha Metricool/plataforma premium — fundo cinza claro, cards brancos com sombra sutil, topbar grafite, acentos lima/esmeralda/teal, tipografia Plus Jakarta Sans + Inter. **PROIBIDO voltar ao roxo/azul/preto-marinho** ("ultrapassado"). Light é o tema PADRÃO; dark é grafite neutro com nav ativa lima.
+- **Todas as cores via CSS vars** em `:root` (light, padrão) e `:root[data-theme="dark"]` em `style.css`. NUNCA hardcodar hex em estilos inline no app.js — usar `"var(--pos)"` etc. Topbar tem vars próprias (`--topbar-*`) pois é escura nos dois temas.
+- Chave do localStorage: `outsight-theme-v2` (a v1 foi aposentada quando o padrão virou light).
 - Canvas (gauges, Chart.js) não aceita `var()`: resolver com o helper `cssVar()` e **redesenhar na troca de tema** (gauges via `drawAllGauges()`, charts destruídos/reconstruídos via `chartInstances`).
 - Anti-flash: script inline no `<head>` do index.html aplica o tema do localStorage antes do CSS.
 
