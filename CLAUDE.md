@@ -46,7 +46,7 @@ Toda feature nova deve servir a pelo menos um pilar:
 
 Copilot (chat) · Behavior Index · Sinais & Dados · **Trends** (radar externo fashion: picos anotados A/B com callouts de drivers, ranking com sparklines SVG, share of voice, conversas por categoria, nuvem de temas) · Alertas. Trends é 100% fictício por decisão de produto — APIs reais (Google Trends alpha, TikTok Commercial Content API, X pago) ficam para o roadmap de produção via Netlify Functions dedicadas.
 
-Chat tem toolbar com "Baixar conversa" (.txt) e "Limpar" (restaura o hero com os chips). Sinais & Dados e Trends têm botão "✦ Pedir leitura da IA" no header. Gráficos são lazy (`buildCharts`/`buildTrendsCharts` + flags `chartsReady`/`trendsReady`) e reconstruídos na troca de tema via `chartInstances`.
+Chat tem toolbar com "Baixar conversa" (.txt) e "Limpar" (restaura o hero com os chips); prompts sugeridos são GENÉRICOS (user básico não conhece os dados internos — nunca citar produto/número no chip) e os 3 pilares ficam em colunas horizontais. Sinais & Dados e Trends têm botão "✦ Pedir leitura da IA" no header. Sinais tem filtro de período (7/30/60/90d) que re-renderiza KPIs (`renderKPIs`) e gráficos; todos os gráficos têm tooltip `mode: index` com valor + variação vs dia/semana anterior. Consumer Insights tem gauge animado (`animateGauge`) com filtro de período (`biPorPeriodo` em data.js) e análise dinâmica. Alertas tem aside "Como um alerta nasce". Modal "?" (guia do usuário) no topbar explica metodologia, fontes, alertas e IA (GPT-4o). Gráficos são lazy (`buildCharts`/`buildTrendsCharts`/`buildBiCharts` + flags) e reconstruídos na troca de tema/período via `chartInstances`. Logos de fontes em `public/img/`.
 
 ## Autenticação (Supabase)
 
