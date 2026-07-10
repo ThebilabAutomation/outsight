@@ -296,6 +296,13 @@
         body: JSON.stringify({ messages: history })
       });
       const data = await resp.json();
+      if (data.disabled) {
+        typingDiv.querySelector(".msg-bubble").innerHTML =
+          `<p>⏸️ <b>O agente está temporariamente pausado pelo administrador.</b></p>
+           <p style="font-size:12.5px;color:var(--txt-3)">Os painéis de dados continuam disponíveis normalmente. Tente novamente mais tarde.</p>`;
+        history.pop();
+        return;
+      }
       if (!resp.ok || data.error) throw new Error(data.error || "Erro " + resp.status);
       typingDiv.querySelector(".msg-bubble").innerHTML = renderReply(data.reply);
       history.push({ role: "assistant", content: data.reply });

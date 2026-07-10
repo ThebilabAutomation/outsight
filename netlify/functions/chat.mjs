@@ -193,6 +193,31 @@ const SUPABASE_URL = process.env.SUPABASE_URL || "https://uxhznmztpcxtmnolishc.s
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "sb_publishable_AHSo3usl9vaQOdRO2R0R3g_2-iTZASD";
 const AUTH_ENABLED = !SUPABASE_URL.includes("COLE_AQUI") && !SUPABASE_ANON_KEY.includes("COLE_AQUI");
 
+/* Interruptor do chat (kill switch de créditos da OpenAI).
+   Lê a chave 'chat_enabled' da tabela public.app_config no Supabase.
+   Liga/desliga pelo dashboard (Table Editor) — sem redeploy.
+   Cache de 60s por instância; se a tabela não existir, assume LIGADO. */
+let chatFlag = { value: true, ts: 0 };
+async function chatHabilitado() {
+  if (!AUTH_ENABLED) return true;
+  if (Date.now() - chatFlag.ts < 60_000) return chatFlag.value;
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/app_config?key=eq.chat_enabled&select=value`,
+      { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    if (r.ok) {
+      const rows = await r.json();
+      chatFlag = { value: rows.length === 0 || rows[0].value === "true", ts: Date.now() };
+    } else {
+      chatFlag = { value: true, ts: Date.now() }; // tabela ausente → não bloqueia
+    }
+  } catch {
+    chatFlag = { value: true, ts: Date.now() };
+  }
+  return chatFlag.value;
+}
+
 export default async (req) => {
   const cors = {
     "Access-Control-Allow-Origin": "*",
@@ -221,6 +246,14 @@ export default async (req) => {
     } catch {
       return Response.json({ error: "Falha ao validar a sessão. Tente de novo." }, { status: 503, headers: cors });
     }
+  }
+
+  // kill switch: administrador pode pausar o agente sem redeploy
+  if (!(await chatHabilitado())) {
+    return Response.json(
+      { error: "O agente está temporariamente pausado pelo administrador.", disabled: true },
+      { status: 503, headers: cors }
+    );
   }
 
   const apiKey = process.env.OPENAI_API_KEY;

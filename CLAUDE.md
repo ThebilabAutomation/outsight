@@ -55,6 +55,7 @@ Chat tem toolbar com "Baixar conversa" (.txt) e "Limpar" (restaura o hero com os
 - A function `chat.mjs` valida o token (`Authorization: Bearer`) contra `{SUPABASE_URL}/auth/v1/user` antes de chamar a OpenAI — protege os créditos. Mesmos valores no topo do chat.mjs (ou env vars SUPABASE_URL/SUPABASE_ANON_KEY no Netlify, que têm precedência).
 - Sem cadastro na UI: usuários são criados no dashboard do Supabase (Authentication → Users → Add user, com auto-confirm). Projeto Supabase: "Outsight project" (org ThebilabAutomation) — NÃO acessível pelo MCP conectado (que enxerga outra conta).
 - Sessão persiste via supabase-js (localStorage); logout no chip do usuário no topbar.
+- **Kill switch do chat (proteção de créditos OpenAI)**: a function lê `public.app_config` (key `chat_enabled`) no Supabase antes de chamar a OpenAI — cache de 60s por instância. Liga/desliga no Table Editor do Supabase (value `true`/`false`), sem redeploy. Se a tabela não existir, assume LIGADO. Front mostra "agente pausado" quando `disabled: true` (sem cair no fallback offline).
 
 ## Arquitetura
 
