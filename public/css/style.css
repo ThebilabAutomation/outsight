@@ -266,6 +266,7 @@ h1 { font-family: var(--font-display); font-size: 34px; font-weight: 800; margin
 .msg.user .msg-avatar { background: var(--card-2); border: 1px solid var(--line); }
 .msg-bubble {
   padding: 13px 17px; border-radius: 16px; line-height: 1.62; min-width: 0;
+  max-width: 100%; overflow-wrap: break-word;
 }
 .msg.bot .msg-bubble { background: var(--card); border: 1px solid var(--line); border-top-left-radius: 4px; }
 .msg.user .msg-bubble { background: var(--tint); border: 1px solid var(--tint-border); border-top-right-radius: 4px; }
@@ -276,7 +277,7 @@ h1 { font-family: var(--font-display); font-size: 34px; font-weight: 800; margin
 .msg-bubble strong { color: var(--strong-txt); }
 .msg-bubble code { background: var(--bg-3); padding: 1px 6px; border-radius: 6px; font-size: 12.5px; }
 .msg-bubble pre { background: var(--bg-3); padding: 12px; border-radius: 10px; overflow-x: auto; margin: 8px 0; }
-.msg-bubble table { border-collapse: collapse; margin: 8px 0; font-size: 13px; }
+.msg-bubble table { border-collapse: collapse; margin: 8px 0; font-size: 13px; display: block; overflow-x: auto; max-width: 100%; }
 .msg-bubble th, .msg-bubble td { border: 1px solid var(--line); padding: 5px 10px; }
 
 .typing { display: inline-flex; gap: 5px; padding: 6px 2px; }
@@ -985,6 +986,13 @@ h1 { font-family: var(--font-display); font-size: 34px; font-weight: 800; margin
   .nav-label, .sidebar-footer { display: none; }
   .view-scroll, .chat-scroll { padding-left: 16px; padding-right: 16px; }
   .chat-input-bar { padding-left: 16px; padding-right: 16px; }
+  .chat-toolbar { padding: 10px 16px 0; }
   h1 { font-size: 26px; }
   .client-chip { display: none; }
+  .agent-status { display: none; }
+  .topbar { gap: 10px; padding: 0 14px; }
+  .brand-name { font-size: 14px; letter-spacing: 3px; }
+  .msg { max-width: 100%; }
+  .user-email { max-width: 90px; }
+  .view-head-right { width: 100%; justify-content: space-between; }
 }
