@@ -183,7 +183,7 @@
     const div = document.createElement("div");
     div.className = "msg " + (role === "user" ? "user" : "bot");
     div.innerHTML = `
-      <div class="msg-avatar">${role === "user" ? "👤" : "◉"}</div>
+      <div class="msg-avatar">${role === "user" ? "👤" : "◎"}</div>
       <div class="msg-bubble">${html}</div>`;
     chatMessages.appendChild(div);
     chatScroll.scrollTop = chatScroll.scrollHeight;
