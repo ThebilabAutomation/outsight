@@ -23,6 +23,7 @@
       if (btn.dataset.view === "sinais" && !chartsReady) buildCharts();
       if (btn.dataset.view === "trends" && !trendsReady) buildTrendsCharts();
       if (btn.dataset.view === "bi" && !biChartsReady) buildBiCharts();
+      if (btn.dataset.view === "bi") animateGauge($("#gauge-big"), -2, D.biPorPeriodo[biPeriodoAtual].bi, { thick: 18 });
     });
   });
   const goToChat = () => {
@@ -68,11 +69,42 @@
     ctx.beginPath(); ctx.arc(px, py, 8, 0, 2 * Math.PI); ctx.stroke();
   }
 
+  let biPeriodoAtual = "7";
+  let gaugeBigValue = D.biPorPeriodo["7"].bi;
   function drawAllGauges() {
     drawGauge($("#gauge-rail"), D.brand.behaviorIndexGeral);
-    drawGauge($("#gauge-big"), D.brand.behaviorIndexGeral, { thick: 18 });
+    drawGauge($("#gauge-big"), gaugeBigValue, { thick: 18 });
+  }
+  function animateGauge(canvas, from, to, opts = {}) {
+    const dur = 900, t0 = performance.now();
+    const ease = t => 1 - Math.pow(1 - t, 3);
+    const frame = now => {
+      const k = Math.min(1, (now - t0) / dur);
+      drawGauge(canvas, from + (to - from) * ease(k), opts);
+      if (k < 1) requestAnimationFrame(frame);
+    };
+    requestAnimationFrame(frame);
   }
   drawAllGauges();
+  animateGauge($("#gauge-rail"), -2, D.brand.behaviorIndexGeral);
+
+  // filtro de período do Behavior Index + análise dinâmica
+  function setBiPeriodo(p, animar = true) {
+    const de = D.biPorPeriodo[biPeriodoAtual].bi;
+    biPeriodoAtual = p;
+    const info = D.biPorPeriodo[p];
+    gaugeBigValue = info.bi;
+    $$("#bi-periodo button").forEach(b => b.classList.toggle("active", b.dataset.p === p));
+    $("#gauge-big-value").textContent = fmtBI(info.bi);
+    $("#gauge-big-value").style.color = biColor(info.bi);
+    $("#gauge-big-caption").textContent = `BI geral · VELLA · últimos ${p} dias`;
+    $("#bi-delta").textContent = info.deltaTxt;
+    $("#bi-analise-txt").textContent = info.analise;
+    if (animar) animateGauge($("#gauge-big"), de, info.bi, { thick: 18 });
+    else drawGauge($("#gauge-big"), info.bi, { thick: 18 });
+  }
+  $$("#bi-periodo button").forEach(b => b.addEventListener("click", () => setBiPeriodo(b.dataset.p)));
+  setBiPeriodo("7", false);
   $("#gauge-rail-value").textContent = fmtBI(D.brand.behaviorIndexGeral);
   $("#gauge-rail-value").style.color = biColor(D.brand.behaviorIndexGeral);
   $("#gauge-big-value").textContent = fmtBI(D.brand.behaviorIndexGeral);
@@ -100,6 +132,22 @@
       if ($("#view-bi").classList.contains("active")) buildBiCharts();
     }
   });
+
+  /* ================= GUIA DO USUÁRIO (?) ================= */
+  const helpOverlay = $("#help-overlay");
+  const abrirGuia = (secao) => {
+    helpOverlay.classList.remove("hidden");
+    if (secao) {
+      $$(".help-body details").forEach(d => d.removeAttribute("open"));
+      const alvo = document.getElementById(secao);
+      if (alvo) alvo.setAttribute("open", "");
+    }
+  };
+  $("#help-btn").addEventListener("click", () => abrirGuia());
+  $("#help-close").addEventListener("click", () => helpOverlay.classList.add("hidden"));
+  helpOverlay.addEventListener("click", e => { if (e.target === helpOverlay) helpOverlay.classList.add("hidden"); });
+  $("#alertas-help").addEventListener("click", () => abrirGuia("hs-alertas"));
+  $("#aside-guia-btn").addEventListener("click", () => abrirGuia("hs-alertas"));
 
   /* ================= CHAT ================= */
   const chatMessages = $("#chat-messages");
@@ -272,6 +320,19 @@
   /* Fallback offline para os prompts principais da demo */
   function offlineAnswer(q) {
     const s = q.toLowerCase();
+    if (s.includes("vendendo menos") || s.includes("interno ou externo") || s.includes("queda de vendas") || s.includes("perdendo vendas")) {
+      return `**Sim — dois produtos perderam vendas nas últimas semanas, por causas opostas.** É exatamente por isso que separo sempre o interno do externo:
+
+**1. Saia Plissada Lume — causa INTERNA (o site, não o produto)**
+Produto→carrinho no mobile caiu **44,6%** desde 28/jun — data exata da release 2.9 do site, que quebrou o filtro de tamanho no mobile. Zero menções negativas novas sobre a peça (aprovação segue em 79%). Perda estimada: R$ 210k/mês. *Ação: hotfix do filtro hoje.*
+
+**2. Casaco Oversized Vega — causa EXTERNA (percepção, não o funil)**
+Conversão caiu **25,3%** em 72h após um vídeo viral no TikTok (2,1M views) mostrar o zíper enroscando. As sessões até subiram 38% — curiosidade sem intenção. *Ação: resposta pública + redirecionar mídia para o Trench Maré (BI +2,10).*
+
+**A leitura que evita decisão errada:** sem esse cruzamento, o time mataria a Lume achando que "saiu de moda" (heurística da representatividade) e daria desconto no Vega achando que é preço — quando o problema é confiança.
+
+⚠️ **Checagem de viés:** a queda mais recente e vívida (Vega) tende a dominar a atenção — mas a da Lume custa mais por mês e tem correção mais barata.`;
+    }
     if (s.includes("lume") || (s.includes("parou de vender") && !s.includes("vega"))) {
       return `**Resposta direta: é o site, não o produto.**
 
@@ -320,7 +381,7 @@
 {"contexto":"Trench Coat Maré","cluster":"Caçadoras de Tendência","im":4.0,"ie":1.9,"bi":2.1,"leitura":"Motivação máxima com esforço mínimo: cada real de mídia aqui rende mais que em qualquer outro produto."}
 \`\`\``;
     }
-    if (s.includes("recompra") || s.includes("clássicas") || s.includes("classicas") || s.includes("fidel")) {
+    if (s.includes("recompra") || s.includes("clássicas") || s.includes("classicas") || s.includes("fidel") || s.includes("comprarem") || s.includes("voltar")) {
       return `**O que está acontecendo:** a recompra das Clássicas Conscientes caiu **14% no trimestre** — e é o cluster com maior LTV potencial (24% da receita).
 
 **Por que:** o BI do contexto de recompra está em **+0,63**, travado pelo Esforço de Tempo (3,8): a memória do frete lento (9+ dias no N/NE) ancora a próxima decisão antes mesmo dela começar — heurística da disponibilidade em ação.
@@ -410,7 +471,7 @@
 
 ⚠️ **Checagem de viés:** efeito manada — nem toda tendência com volume alto é para a VELLA. O filtro é: conecta com um produto do portfólio E move IM ou reduz IE de um cluster? Se não, é ruído.`;
     }
-    if (s.includes("campanha")) {
+    if (s.includes("campanha") || s.includes("público certo") || s.includes("publico certo")) {
       return `**Qual campanha está dando certo — e para quem:**
 
 | Campanha | ROAS | Veredito |
@@ -546,34 +607,54 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
     $("#cluster-grid").appendChild(card);
   });
 
-  /* ================= VIEW: SINAIS ================= */
-  const last7 = D.dias.slice(-7), prev7 = D.dias.slice(-14, -7);
+  /* ================= VIEW: SINAIS (KPIs + filtro de período) ================= */
   const sum = (arr, k) => arr.reduce((a, b) => a + b[k], 0);
   const avg = (arr, k) => sum(arr, k) / arr.length;
-  const receita7 = sum(last7, "receita");
-  const dReceita = ((receita7 - sum(prev7, "receita")) / sum(prev7, "receita")) * 100;
-  const conv7 = avg(last7, "conversao");
-  const dConv = ((conv7 - avg(prev7, "conversao")) / avg(prev7, "conversao")) * 100;
-  const sess7 = sum(last7, "sessoes");
-  const dSess = ((sess7 - sum(prev7, "sessoes")) / sum(prev7, "sessoes")) * 100;
-  const aband7 = avg(last7, "abandono");
+  let periodoSinais = 90;
+  const ticketMedioDe = arr => avg(arr.map(d => ({ t: d.receita / (d.sessoes * d.conversao / 100) })), "t");
+  function renderKPIs(p) {
+    const cur = D.dias.slice(-p);
+    const prev = D.dias.length >= p * 2 ? D.dias.slice(-2 * p, -p) : null;
+    const pct = (c, pr) => ((c - pr) / pr) * 100;
+    const receita = sum(cur, "receita"), sess = sum(cur, "sessoes"),
+      conv = avg(cur, "conversao"), aband = avg(cur, "abandono"), ticket = ticketMedioDe(cur);
+    const kpis = [
+      { label: `Receita · ${p} dias`, value: fmtBRL(receita), delta: prev ? pct(receita, sum(prev, "receita")) : null, sufixo: "%" },
+      { label: `Sessões · ${p} dias`, value: sess.toLocaleString("pt-BR"), delta: prev ? pct(sess, sum(prev, "sessoes")) : null, sufixo: "%" },
+      { label: "Conversão média", value: conv.toFixed(2).replace(".", ",") + "%", delta: prev ? pct(conv, avg(prev, "conversao")) : null, sufixo: "%" },
+      { label: "Abandono de carrinho", value: aband.toFixed(1).replace(".", ",") + "%", delta: prev ? aband - avg(prev, "abandono") : null, sufixo: " p.p.", invertido: true },
+      { label: "Ticket médio", value: fmtBRL(Math.round(ticket)), delta: prev ? pct(ticket, ticketMedioDe(prev)) : null, sufixo: "%" },
+      { label: "NPS", value: D.brand.nps, delta: D.brand.npsDeltaTrim, sufixo: " pts", notaDelta: "vs trimestre anterior (pesquisa)" }
+    ];
+    $("#kpi-row").innerHTML = "";
+    kpis.forEach(k => {
+      const el = document.createElement("div");
+      el.className = "kpi-card";
+      let deltaHTML;
+      if (k.delta !== null && isFinite(k.delta)) {
+        const bom = k.invertido ? k.delta <= 0 : k.delta >= 0;
+        deltaHTML = `<div class="kpi-delta ${bom ? "up" : "down"}">${k.delta >= 0 ? "▲" : "▼"} ${Math.abs(k.delta).toFixed(1).replace(".", ",")}${k.sufixo} ${k.notaDelta || "vs período anterior"}</div>`;
+      } else {
+        deltaHTML = `<div class="kpi-delta neutro">período completo da base</div>`;
+      }
+      el.innerHTML = `<div class="kpi-label">${k.label}</div><div class="kpi-value">${k.value}</div>${deltaHTML}`;
+      $("#kpi-row").appendChild(el);
+    });
+  }
+  renderKPIs(periodoSinais);
 
-  const kpis = [
-    { label: "Receita · 7 dias", value: fmtBRL(receita7), delta: dReceita },
-    { label: "Sessões · 7 dias", value: sess7.toLocaleString("pt-BR"), delta: dSess },
-    { label: "Conversão média", value: conv7.toFixed(2).replace(".", ",") + "%", delta: dConv },
-    { label: "Abandono de carrinho", value: aband7.toFixed(1).replace(".", ",") + "%", delta: null },
-    { label: "Ticket médio", value: fmtBRL(D.brand.ticketMedio), delta: null },
-    { label: "NPS", value: D.brand.nps, delta: null }
-  ];
-  kpis.forEach(k => {
-    const el = document.createElement("div");
-    el.className = "kpi-card";
-    el.innerHTML = `
-      <div class="kpi-label">${k.label}</div>
-      <div class="kpi-value">${k.value}</div>
-      ${k.delta !== null ? `<div class="kpi-delta ${k.delta >= 0 ? "up" : "down"}">${k.delta >= 0 ? "▲" : "▼"} ${Math.abs(k.delta).toFixed(1).replace(".", ",")}% vs semana anterior</div>` : ""}`;
-    $("#kpi-row").appendChild(el);
+  // filtro de data interativo: KPIs + gráficos da view
+  $$("#periodo-filtro button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      $$("#periodo-filtro button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      periodoSinais = parseInt(btn.dataset.p, 10);
+      renderKPIs(periodoSinais);
+      chartInstances.forEach(c => c.destroy());
+      chartInstances.length = 0;
+      chartsReady = false; trendsReady = false; biChartsReady = false;
+      buildCharts();
+    });
   });
 
   // temas
@@ -864,9 +945,18 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
       },
       options: {
         maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: c => "Brand Health: " + c.parsed.y } }
+          tooltip: { callbacks: {
+            label: c => "Brand Health: " + c.parsed.y,
+            afterLabel: c => {
+              const i = c.dataIndex, arr = D.brandHealth.serieVella;
+              if (i <= 0) return "";
+              const d = arr[i] - arr[i - 1];
+              return `${d >= 0 ? "▲" : "▼"} ${Math.abs(d)} pts vs semana anterior`;
+            }
+          } }
         },
         scales: { y: { min: 40, max: 90 } }
       }
@@ -899,9 +989,18 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
       },
       options: {
         maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: c => c.parsed.y.toLocaleString("pt-BR") + " menções" } }
+          tooltip: { callbacks: {
+            label: c => c.parsed.y.toLocaleString("pt-BR") + " menções",
+            afterLabel: c => {
+              const i = c.dataIndex, arr = D.trends.picos.volume;
+              if (i <= 0) return "";
+              const d = ((arr[i] - arr[i - 1]) / arr[i - 1]) * 100;
+              return `${d >= 0 ? "▲" : "▼"} ${Math.abs(d).toFixed(0)}% vs semana anterior`;
+            }
+          } }
         },
         scales: { y: { ticks: { callback: v => (v / 1000).toFixed(1).replace(".", ",") + "k" } } }
       },
@@ -976,11 +1075,22 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
     Chart.defaults.font.family = "'Inter', sans-serif";
     Chart.defaults.font.size = 11;
 
-    const labels = D.dias.map(d => {
+    $("#receita-note").textContent = `últimos ${periodoSinais} dias`;
+    const diasSel = D.dias.slice(-periodoSinais);
+    const off = D.dias.length - diasSel.length;
+    const labels = diasSel.map(d => {
       const [y, m, dd] = d.data.split("-");
       return dd + "/" + m;
     });
-    const viralIdx = 75, checkoutIdx = 52;
+    const viralIdx = 75 - off, checkoutIdx = 52 - off;
+    const arrRec = diasSel.map(d => d.receita), arrConv = diasSel.map(d => d.conversao), arrAband = diasSel.map(d => d.abandono);
+    const deltaDia = (arr, i, pp) => {
+      if (i <= 0) return "";
+      const c = arr[i], pr = arr[i - 1];
+      if (pp) { const d = c - pr; return `${d >= 0 ? "▲" : "▼"} ${Math.abs(d).toFixed(2).replace(".", ",")} p.p. vs dia anterior`; }
+      const d = ((c - pr) / pr) * 100;
+      return `${d >= 0 ? "▲" : "▼"} ${Math.abs(d).toFixed(1).replace(".", ",")}% vs dia anterior`;
+    };
 
     // receita
     chartInstances.push(new Chart($("#chart-receita"), {
@@ -989,7 +1099,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
         labels,
         datasets: [{
           label: "Receita (R$)",
-          data: D.dias.map(d => d.receita),
+          data: arrRec,
           borderColor: cssVar("--accent"),
           backgroundColor: (ctx) => {
             const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 280);
@@ -1001,9 +1111,13 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
       },
       options: {
         maintainAspectRatio: false,
+        interaction: { mode: "index", intersect: false },
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: c => "R$ " + c.parsed.y.toLocaleString("pt-BR") } },
+          tooltip: { callbacks: {
+            label: c => "Receita: R$ " + c.parsed.y.toLocaleString("pt-BR"),
+            afterLabel: c => deltaDia(arrRec, c.dataIndex, false)
+          } },
           annotation: undefined
         },
         scales: {
@@ -1020,6 +1134,7 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
             { i: viralIdx, label: "Viral zíper Vega", color: cssVar("--neg") }
           ];
           marks.forEach(m => {
+            if (m.i < 0) return;
             const x = scales.x.getPixelForValue(m.i);
             ctx.save();
             ctx.strokeStyle = m.color; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.4;
@@ -1038,13 +1153,20 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
       data: {
         labels,
         datasets: [{
-          data: D.dias.map(d => d.conversao),
+          data: arrConv,
           borderColor: cssVar("--cyan"), tension: .35, pointRadius: 0, borderWidth: 2, fill: false
         }]
       },
       options: {
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: {
+            label: c => "Conversão: " + c.parsed.y.toFixed(2).replace(".", ",") + "%",
+            afterLabel: c => deltaDia(arrConv, c.dataIndex, true)
+          } }
+        },
         scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { ticks: { callback: v => v.toFixed(1) + "%" } } }
       }
     }));
@@ -1055,13 +1177,20 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
       data: {
         labels,
         datasets: [{
-          data: D.dias.map(d => d.abandono),
+          data: arrAband,
           borderColor: cssVar("--ie-color"), tension: .35, pointRadius: 0, borderWidth: 2
         }]
       },
       options: {
         maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
+        interaction: { mode: "index", intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: {
+            label: c => "Abandono: " + c.parsed.y.toFixed(1).replace(".", ",") + "%",
+            afterLabel: c => deltaDia(arrAband, c.dataIndex, true)
+          } }
+        },
         scales: { x: { ticks: { maxTicksLimit: 8 } }, y: { ticks: { callback: v => v + "%" } } }
       }
     }));
@@ -1079,7 +1208,17 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
       },
       options: {
         maintainAspectRatio: false,
-        plugins: { legend: { position: "bottom" } },
+        plugins: {
+          legend: { position: "bottom" },
+          tooltip: { callbacks: {
+            afterLabel: c => {
+              const i = c.dataIndex;
+              if (i <= 0) return "";
+              const d = c.dataset.data[i] - c.dataset.data[i - 1];
+              return `${d >= 0 ? "▲" : "▼"} ${Math.abs(d).toLocaleString("pt-BR")} vs semana anterior`;
+            }
+          } }
+        },
         scales: { x: { stacked: true }, y: { stacked: true } }
       }
     }));

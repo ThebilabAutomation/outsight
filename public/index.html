@@ -35,6 +35,7 @@
         <span class="user-email" id="user-email"></span>
         <button id="logout-btn" title="Sair da conta">Sair</button>
       </div>
+      <button id="help-btn" class="theme-toggle" title="Guia do usuário">?</button>
       <button id="theme-toggle" class="theme-toggle" title="Alternar tema claro/escuro"><span id="theme-icon">☀️</span></button>
     </div>
   </header>
@@ -80,7 +81,6 @@
             </div>
             <div class="chat-scroll" id="chat-scroll">
               <div class="chat-hero" id="chat-hero">
-                <div class="hero-orb"></div>
                 <h1>Pergunte ao <span class="grad">OutSight</span></h1>
                 <p>Eu conecto o que acontece <strong>dentro da sua operação</strong> ao que acontece <strong>nas ruas</strong> — e devolvo a decisão pronta, sem achismo e sem viés.</p>
                 <div id="prompt-pilares"></div>
@@ -173,12 +173,22 @@
               </div>
             </div>
             <div class="bi-hero-right">
+              <div class="periodo-filtro" id="bi-periodo">
+                <button data-p="7" class="active">7d</button>
+                <button data-p="30">30d</button>
+                <button data-p="90">90d</button>
+              </div>
               <div class="gauge-big-wrap">
                 <canvas id="gauge-big" width="340" height="200"></canvas>
                 <div class="gauge-big-value" id="gauge-big-value">+0,92</div>
-                <div class="gauge-big-caption">BI geral · VELLA · últimos 7 dias</div>
+                <div class="gauge-big-caption" id="gauge-big-caption">BI geral · VELLA · últimos 7 dias</div>
+                <div class="bi-delta" id="bi-delta"></div>
               </div>
             </div>
+          </div>
+          <div class="bi-analise" id="bi-analise">
+            <span class="bi-analise-tag">✦ Leitura do agente</span>
+            <span id="bi-analise-txt"></span>
           </div>
 
           <h2 class="section-title">🧭 Jornada end-to-end · esforço por etapa <span class="pilar-tag">Prioridade · Jornada</span></h2>
@@ -219,14 +229,22 @@
               <h1>Sinais <span class="grad">&amp; Dados</span></h1>
               <p class="section-sub">O interno (loja) e o externo (ruas) lado a lado — a bolha, estourada.</p>
             </div>
-            <button class="btn-ia btn-ia-lg" id="sinais-ia">✦ Pedir leitura da IA</button>
+            <div class="view-head-right">
+              <div class="periodo-filtro" id="periodo-filtro">
+                <button data-p="7">7d</button>
+                <button data-p="30">30d</button>
+                <button data-p="60">60d</button>
+                <button data-p="90" class="active">90d</button>
+              </div>
+              <button class="btn-ia btn-ia-lg" id="sinais-ia">✦ Pedir leitura da IA</button>
+            </div>
           </div>
 
           <div class="kpi-row" id="kpi-row"></div>
 
           <div class="charts-grid">
             <div class="chart-card wide">
-              <div class="chart-title">Receita diária × evento externo <span class="chart-note">últimos 90 dias</span></div>
+              <div class="chart-title">Receita diária × evento externo <span class="chart-note" id="receita-note">últimos 90 dias</span></div>
               <canvas id="chart-receita"></canvas>
             </div>
             <div class="chart-card">
@@ -308,6 +326,13 @@
               <div class="section-kicker">RADAR EXTERNO · FASHION</div>
               <h1>Trends <span class="grad">nas ruas</span></h1>
               <p class="section-sub">O que está subindo lá fora antes de virar (ou deixar de virar) venda aqui dentro. <span class="release-nota" id="trends-updated"></span></p>
+              <div class="fontes-row">
+                <span class="fontes-label">Fontes monitoradas</span>
+                <span class="fonte-logo" title="TikTok Creative Center"><img src="img/tiktok.png" alt="TikTok"></span>
+                <span class="fonte-logo" title="X · Trending Topics"><img src="img/x.jpg" alt="X"></span>
+                <span class="fonte-logo wide" title="Google Trends"><img src="img/google-trends.png" alt="Google Trends"></span>
+                <span class="fonte-mais">+ Instagram · Reclame Aqui</span>
+              </div>
             </div>
             <button class="btn-ia btn-ia-lg" id="trends-ia">✦ Pedir leitura da IA</button>
           </div>
@@ -351,13 +376,70 @@
       <section class="view" id="view-alertas">
         <div class="view-scroll">
           <div class="section-kicker">AGENTE AUTÔNOMO · DETECÇÃO CONTÍNUA</div>
-          <h1>Alertas <span class="grad">prescritivos</span></h1>
+          <h1>Alertas <span class="grad">prescritivos</span> <button class="help-inline" id="alertas-help" title="Como os alertas são gerados?">?</button></h1>
           <p class="section-sub">Não avisamos o problema — prescrevemos a solução. Métrica interna + causa externa + ação recomendada + leitura comportamental.</p>
-          <div class="alertas-list" id="alertas-list"></div>
+          <div class="alertas-wrap">
+            <div class="alertas-list" id="alertas-list"></div>
+            <aside class="alertas-aside">
+              <div class="aside-card">
+                <div class="aside-title">Como um alerta nasce</div>
+                <div class="aside-step"><span class="aside-num">1</span><div><b>Detecção interna</b><br>Uma métrica foge do padrão histórico (conversão, funil, devolução) — monitoramento contínuo, não relatório mensal.</div></div>
+                <div class="aside-step"><span class="aside-num">2</span><div><b>Varredura externa</b><br>O agente cruza o desvio com listening, SAC, trends e concorrência para separar causa interna de externa.</div></div>
+                <div class="aside-step"><span class="aside-num">3</span><div><b>Leitura comportamental</b><br>O impacto é traduzido em motivação × esforço (Behavior Index) e checado contra vieses de interpretação.</div></div>
+                <div class="aside-step"><span class="aside-num">4</span><div><b>Prescrição</b><br>Sai a ação recomendada com impacto estimado e a fonte de cada dado — decisão pronta, não gráfico.</div></div>
+                <button class="btn-ia" id="aside-guia-btn" style="width:100%;margin-top:12px">Ver guia completo</button>
+              </div>
+              <div class="aside-card">
+                <div class="aside-title">Severidades</div>
+                <div class="aside-sev-row"><span class="dot" style="background:var(--neg)"></span> Crítica — agir hoje</div>
+                <div class="aside-sev-row"><span class="dot" style="background:var(--warn)"></span> Alta — agir na semana</div>
+                <div class="aside-sev-row"><span class="dot" style="background:var(--accent)"></span> Média — planejar</div>
+                <div class="aside-sev-row"><span class="dot" style="background:var(--pos)"></span> Oportunidade — capturar</div>
+              </div>
+            </aside>
+          </div>
         </div>
       </section>
 
     </main>
+  </div>
+
+  <!-- ===== GUIA DO USUÁRIO (modal ?) ===== -->
+  <div class="help-overlay hidden" id="help-overlay">
+    <div class="help-modal">
+      <div class="help-head">
+        <div class="help-title">Guia do usuário · <span>OUTSIGHT</span></div>
+        <button class="help-close" id="help-close">✕</button>
+      </div>
+      <div class="help-body">
+        <details id="hs-oque" open>
+          <summary>O que é o OutSight?</summary>
+          <p>Uma camada de <b>pesquisa e inteligência comportamental com IA</b> que substitui, a custo acessível, o investimento em institutos de pesquisa que a indústria faz e o e-commerce médio não tem margem para fazer. O motor <b>Consumer Insights</b> analisa quatro lentes — cultura, vieses cognitivos, crenças/percepções e motivações — antes de qualquer número, e conecta o comportamento interno da sua operação ao contexto real das ruas.</p>
+        </details>
+        <details id="hs-bi">
+          <summary>Como funciona o Behavior Index?</summary>
+          <p>O BI é a ferramenta de medição da metodologia (© Be Intelligence / Perla Amabile): <b>BI = IM − IE</b>, onde IM (Motivação) = média de Desejo, Necessidade e Urgência, e IE (Esforço) = média dos esforços Financeiro, Cognitivo, Físico, de Tempo e Emocional, em notas de 1 a 5. BI positivo indica propensão à ação; negativo, procrastinação/inação. <b>As notas são estimadas pela IA</b> cruzando dados qualitativos e quantitativos — conversas sociais, SAC, avaliações, pesquisas do cliente e analytics — nunca por autoavaliação.</p>
+        </details>
+        <details id="hs-dados">
+          <summary>De onde vêm os dados?</summary>
+          <p>Em produção, o OutSight conecta fontes que um e-commerce médio já possui: <b>Google Analytics / Hotjar</b> (navegação e usabilidade), <b>CRM e ERP</b> (clientes, vendas, logística), <b>plataformas de mídia</b> (Meta, Google, TikTok Ads), <b>social listening</b> (menções, sentimento, tendências), <b>SAC</b> (via ferramenta de atendimento do cliente, como WhatsApp Business) e <b>pesquisas históricas</b> da marca. Cada análise exibida cita a fonte do dado.</p>
+          <p class="help-note">⚠️ Nesta demonstração, todos os dados são <b>fictícios</b> (marca simulada VELLA) — mas cada análise foi desenhada para ser reproduzível com dados reais coletáveis.</p>
+        </details>
+        <details id="hs-alertas">
+          <summary>Como os alertas são gerados?</summary>
+          <p>Em 4 etapas: (1) <b>detecção interna</b> — uma métrica foge do padrão histórico; (2) <b>varredura externa</b> — o agente cruza o desvio com listening, SAC e trends para separar causa interna de externa; (3) <b>leitura comportamental</b> — o impacto é traduzido em motivação × esforço e checado contra vieses de interpretação (ancoragem, disponibilidade, confirmação…); (4) <b>prescrição</b> — ação recomendada com impacto estimado e fontes citadas.</p>
+        </details>
+        <details id="hs-ia">
+          <summary>Qual IA e modelo estão sendo usados?</summary>
+          <p>O chat usa o modelo <b>GPT-4o (OpenAI)</b> através de uma função serverless segura — a chave da API nunca chega ao navegador e cada requisição exige login válido. Sobre o modelo roda a <b>camada OutSight</b>: a metodologia Consumer Insights, o dataset da marca e a instrução permanente de sinalizar "⚠️ Checagem de viés" quando houver risco de leitura enviesada. As respostas citam os números reais do dataset — a IA não inventa métricas.</p>
+        </details>
+        <details id="hs-limites">
+          <summary>Limitações desta demo</summary>
+          <p>Dados 100% fictícios (marca simulada VELLA); o radar de Trends usa fontes simuladas — as integrações reais (Google Trends API, TikTok Commercial Content API, X) estão no roadmap de produção; usuários são criados pelo administrador (sem cadastro aberto na interface).</p>
+        </details>
+      </div>
+      <div class="help-foot">Metodologia Behavior Index © Be Intelligence · OutSight 2026</div>
+    </div>
   </div>
 
   <!-- ===== LOGIN (página de entrada) ===== -->

@@ -14,6 +14,7 @@ const VELLA = (() => {
     faturamentoMes: 2847000,
     ticketMedio: 389,
     nps: 62,
+    npsDeltaTrim: 4, // vs trimestre anterior (pesquisa NPS trimestral)
     behaviorIndexGeral: 0.92
   };
 
@@ -385,6 +386,17 @@ const VELLA = (() => {
     }
   ];
 
+  /* ---------- Behavior Index por período (filtro do gauge) ----------
+     BI médio ponderado dos contextos ativos em cada janela; análise dinâmica. */
+  const biPorPeriodo = {
+    "7":  { bi: 0.92, deltaTxt: "▲ +0,14 vs 7 dias anteriores",
+            analise: "Semana em recuperação: o Trench Maré (BI +2,10) e a resposta parcial à crise do Vega puxaram a propensão à ação para cima. O que segura o índice é o esforço de entrega no N/NE (ET 4,2) — reduzir esse atrito é o caminho mais curto para sustentar a alta." },
+    "30": { bi: 0.87, deltaTxt: "▲ +0,05 vs 30 dias anteriores",
+            analise: "Mês marcado pela crise do zíper: a desconfiança (EE 4,7 no Vega) derrubou a motivação do produto, mas a onda de inverno compensou na categoria casacos. Sem o bug do filtro mobile (28/jun), o índice teria fechado acima de 0,95." },
+    "90": { bi: 0.78, deltaTxt: "tendência de alta no trimestre",
+            analise: "No trimestre, o BI evoluiu de ~0,71 para 0,92: o novo checkout (01/jun) cortou esforço cognitivo e o inverno elevou desejo e urgência. Os freios estruturais seguem os mesmos — prazo de entrega e grade de tamanhos — e valem mais que qualquer campanha nova." }
+  };
+
   /* ---------- PRIORIDADE PERLA · Saúde da marca & Posicionamento ----------
      Fonte real: social listening com classificação de atributos por NLP
      (share de menções positivas por atributo) + série composta semanal. */
@@ -493,31 +505,31 @@ const VELLA = (() => {
       pilar: "Problema", icone: "🔍",
       descricao: "Por que parou de vender? Dados de dentro × dados de fora",
       prompts: [
-        "Por que a Saia Lume parou de vender? É o produto ou o site?",
-        "Por que a conversão do Casaco Vega caiu 25%?",
-        "Onde estou perdendo vendas por esforço percebido?"
+        "Algum produto está vendendo menos do que deveria?",
+        "Minha queda de vendas é problema interno ou externo?",
+        "Onde o site está gerando esforço para o cliente?"
       ]
     },
     {
       pilar: "Novos produtos", icone: "💡",
       descricao: "O que o público pede que ainda não existe",
       prompts: [
-        "Que produtos o público está pedindo que não existem?",
-        "Algum uso inesperado dos nossos produtos virando tendência?",
-        "Onde há demanda reprimida que a concorrência pode capturar?"
+        "O que o público está pedindo que eu ainda não vendo?",
+        "Existe algum uso inesperado dos meus produtos virando tendência?",
+        "Onde há demanda reprimida no meu mercado?"
       ]
     },
     {
       pilar: "Público & campanha", icone: "🎯",
       descricao: "Quem é o público real e o que está dando certo",
       prompts: [
-        "Qual campanha está dando certo e para quem?",
-        "Minha campanha institucional está falando com quem eu penso?",
-        "Como aumentar a recompra das Clássicas Conscientes?"
+        "Quais campanhas estão dando resultado e para quem?",
+        "Estou falando com o público certo?",
+        "Como faço meus clientes comprarem de novo?"
       ]
     }
   ];
   const promptsSugeridos = promptsPilares.flatMap(p => p.prompts);
 
-  return { brand, produtos, clusters, biContextos, dias, social, alertas, usabilidade, demandaLatente, campanhas, publicoGap, lojas, trends, brandHealth, jornada, sac, promptsPilares, promptsSugeridos };
+  return { brand, produtos, clusters, biContextos, biPorPeriodo, dias, social, alertas, usabilidade, demandaLatente, campanhas, publicoGap, lojas, trends, brandHealth, jornada, sac, promptsPilares, promptsSugeridos };
 })();
