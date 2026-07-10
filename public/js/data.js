@@ -42,6 +42,8 @@ const VELLA = (() => {
       perfil: "18–27 anos, descoberta via TikTok/Reels, compra por impulso guiada por prova social e escassez.",
       share: 34,
       drivers: ["Prova social (efeito manada)", "Escassez / urgência", "Busca por status e pertencimento"],
+      ocasioes: ["Look para evento social do fim de semana", "Impulso ao ver trend/creator usando a peça", "Renovação de guarda-roupa na virada de estação"],
+      barreiras: ["Prova social quebrada = desconfiança imediata (EE dispara, caso Vega)", "Peça fora da tendência não entra na consideração (manada reversa)", "Parcelamento/preço sem destaque trava o impulso (EF)"],
       canais: ["TikTok", "Instagram Reels"]
     },
     {
@@ -50,6 +52,8 @@ const VELLA = (() => {
       perfil: "28–38 anos, profissionais urbanas, compra planejada e rápida, valorizam eficiência e frete expresso.",
       share: 27,
       drivers: ["Utilidade funcional", "Redução de esforço de tempo", "Confiança na marca (efeito halo)"],
+      ocasioes: ["Reposição do guarda-roupa de trabalho", "Compra planejada pós-salário", "Necessidade pontual: reunião importante, viagem"],
+      barreiras: ["Qualquer atrito no checkout = abandono sem segunda chance (EC)", "Prazo de entrega incerto não cabe na agenda (ET)", "Excesso de opções sem recomendação clara (sobrecarga de escolha)"],
       canais: ["Google", "E-mail", "App"]
     },
     {
@@ -58,6 +62,8 @@ const VELLA = (() => {
       perfil: "35–50 anos, decisão deliberada (Sistema 2), pesquisam reviews e composição, sensíveis a frete e trocas.",
       share: 24,
       drivers: ["Aversão à perda", "Prova social qualificada (reviews)", "Memória afetiva com a marca"],
+      ocasioes: ["Renovação sazonal planejada", "Recompra de modelos já aprovados", "Presente para si após uma conquista"],
+      barreiras: ["Memória do frete lento ancora a próxima decisão (ET, heurística da disponibilidade)", "Sem reviews e composição detalhada, não compra (EC)", "Medo de errar o tamanho sem troca fácil (aversão à perda)"],
       canais: ["Site direto", "E-mail", "WhatsApp"]
     },
     {
@@ -66,6 +72,8 @@ const VELLA = (() => {
       perfil: "Compra eventual para eventos (festas, formaturas), alta urgência e alto esforço emocional (medo de errar).",
       share: 15,
       drivers: ["Urgência de calendário", "Medo de arrependimento", "Prêmio de indulgência"],
+      ocasioes: ["Casamentos e festas com data marcada", "Formaturas", "Casamento civil — nicho emergente descoberto no listening"],
+      barreiras: ["Medo de não chegar a tempo do evento (ET 4,1)", "Medo de não servir no dia (EE 3,6; devolução 13,5%)", "Tabela de medidas confusa (efeito de ambiguidade)"],
       canais: ["Instagram", "Google", "Indicação"]
     }
   ];
@@ -524,7 +532,7 @@ const VELLA = (() => {
       descricao: "Quem é o público real e o que está dando certo",
       prompts: [
         "Quais campanhas estão dando resultado e para quem?",
-        "Estou falando com o público certo?",
+        "Quem é meu cliente e o que o impede de comprar?",
         "Como faço meus clientes comprarem de novo?"
       ]
     }

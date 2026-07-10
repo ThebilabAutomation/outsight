@@ -396,6 +396,31 @@ Conversão caiu **25,3%** em 72h após um vídeo viral no TikTok (2,1M views) mo
 {"contexto":"Recompra em 90 dias","cluster":"Clássicas Conscientes","im":2.93,"ie":2.3,"bi":0.63,"leitura":"Sem urgência e com memória negativa do frete, a recompra não acontece sozinha — é preciso reescrever a experiência."}
 \`\`\``;
     }
+    if (s.includes("quem é meu cliente") || s.includes("quem e meu cliente") || s.includes("quem são meus clientes") || s.includes("quem sao meus clientes") || (s.includes("ocasiões") && s.includes("motivações")) || (s.includes("ocasioes") && s.includes("motivacoes"))) {
+      return `**Seu cliente se divide em 4 clusters comportamentais — cada um com ocasiões, motivações e barreiras próprias:**
+
+**1. Caçadoras de Tendência (34% da receita)** — 18–27, TikTok/Reels
+- *Ocasiões:* look para evento do fim de semana; impulso ao ver creator; virada de estação
+- *Motivações:* prova social, escassez, status e pertencimento
+- *Barreiras:* prova social quebrada = desconfiança imediata (caso Vega); peça fora da tendência nem entra na consideração
+
+**2. Ritmo Acelerado (27%)** — 28–38, profissionais
+- *Ocasiões:* reposição do guarda-roupa de trabalho; pós-salário; necessidade pontual
+- *Motivações:* utilidade funcional, economia de tempo, confiança na marca
+- *Barreiras:* atrito no checkout = abandono sem segunda chance; prazo de entrega incerto
+
+**3. Clássicas Conscientes (24%)** — 35–50, decisão deliberada
+- *Ocasiões:* renovação sazonal planejada; recompra de modelos aprovados
+- *Motivações:* aversão à perda, reviews, memória afetiva
+- *Barreiras:* memória do frete lento (9+ dias N/NE); sem reviews não compra; medo de errar o tamanho
+
+**4. Ocasião Especial (15%)** — eventos com data marcada
+- *Ocasiões:* casamentos, formaturas e o nicho emergente do casamento civil
+- *Motivações:* urgência de calendário, medo de arrependimento
+- *Barreiras:* medo de não chegar a tempo (ET 4,1) e de não servir (devolução 13,5%)
+
+**Implicação estratégica:** a maior alavanca hoje está nas **Clássicas Conscientes** — maior LTV potencial, e as barreiras (frete e confiança) são operacionais, não de desejo. Nas Caçadoras, o jogo é velocidade de tendência; nas Clássicas, é remover esforço.`;
+    }
     if (s.includes("saúde da marca") || s.includes("saude da marca") || s.includes("posicionamento") || s.includes("reputação") || s.includes("reputacao")) {
       return `**Saúde da marca VELLA — leitura de posicionamento:**
 
@@ -603,7 +628,15 @@ A prova social (85% de aprovação) praticamente eliminou o esforço emocional �
         <div class="cluster-share">${cl.share}%</div>
       </div>
       <div class="cluster-perfil">${cl.perfil}</div>
-      <div class="cluster-drivers">${cl.drivers.map(d => `<span class="driver-tag">${d}</span>`).join("")}</div>`;
+      <div class="cluster-sec">Ocasiões de consumo</div>
+      <ul class="cluster-lista">${cl.ocasioes.map(o => `<li>${o}</li>`).join("")}</ul>
+      <div class="cluster-sec">Motivações</div>
+      <div class="cluster-drivers">${cl.drivers.map(d => `<span class="driver-tag">${d}</span>`).join("")}</div>
+      <div class="cluster-sec">Barreiras</div>
+      <ul class="cluster-lista barreiras">${cl.barreiras.map(b => `<li>${b}</li>`).join("")}</ul>
+      <div class="ctx-actions"><button class="btn-ia btn-ia-sm">✦ Analisar com IA</button></div>`;
+    card.querySelector(".btn-ia").onclick = () =>
+      window.askOutSight(`Aprofunde o cluster "${cl.nome}": ocasiões de consumo, motivações e barreiras — e qual a maior alavanca de crescimento nele hoje?`);
     $("#cluster-grid").appendChild(card);
   });
 
